@@ -1,0 +1,161 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────────────────────────────
+
+enum Role {
+  OWNER
+  ADMIN
+  EDITOR
+  REPORTER
+}
+
+enum ArticleStatus {
+  DRAFT
+  PENDING_REVIEW
+  PUBLISHED
+  ARCHIVED
+}
+
+enum Language {
+  HINDI
+  ENGLISH
+}
+
+// ─── Models ──────────────────────────────────────────────────────────
+
+model User {
+  id             String    @id @default(cuid())
+  name           String
+  email          String    @unique
+  hashedPassword String
+  role           Role      @default(REPORTER)
+  avatarUrl      String?
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+
+  authoredArticles  Article[] @relation("ArticleAuthor")
+  editedArticles    Article[] @relation("ArticleEditor")
+
+  @@map("users")
+}
+
+model Category {
+  id        String    @id @default(cuid())
+  nameEn    String
+  nameHi    String
+  slugEn    String    @unique
+  slugHi    String    @unique
+  sortOrder Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  articles  Article[]
+
+  @@map("categories")
+}
+
+model Article {
+  id             String        @id @default(cuid())
+  titleEn        String?
+  titleHi        String?
+  slugEn         String?       @unique
+  slugHi         String?       @unique
+  excerptEn      String?
+  excerptHi      String?
+  bodyEn         String?       @db.Text
+  bodyHi         String?       @db.Text
+  featuredImage  String?
+  status         ArticleStatus @default(DRAFT)
+  isFeatured     Boolean       @default(false)
+  isBreaking     Boolean       @default(false)
+  metaTitleEn    String?
+  metaTitleHi    String?
+  metaDescEn     String?
+  metaDescHi     String?
+  publishedAt    DateTime?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  authorId       String
+  author         User          @relation("ArticleAuthor", fields: [authorId], references: [id])
+
+  editorId       String?
+  editor         User?         @relation("ArticleEditor", fields: [editorId], references: [id])
+
+  categoryId     String
+  category       Category      @relation(fields: [categoryId], references: [id])
+
+  tags           ArticleTag[]
+  comments       Comment[]
+
+  @@index([status])
+  @@index([categoryId])
+  @@index([authorId])
+  @@index([publishedAt])
+  @@map("articles")
+}
+
+model Tag {
+  id     String       @id @default(cuid())
+  nameEn String
+  nameHi String
+  slug   String       @unique
+
+  articles ArticleTag[]
+
+  @@map("tags")
+}
+
+model ArticleTag {
+  articleId String
+  article   Article @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  tagId     String
+  tag       Tag     @relation(fields: [tagId], references: [id], onDelete: Cascade)
+
+  @@id([articleId, tagId])
+  @@map("article_tags")
+}
+
+model Comment {
+  id         String   @id @default(cuid())
+  authorName String
+  authorEmail String?
+  body       String   @db.Text
+  approved   Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
+  articleId  String
+  article    Article  @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([articleId])
+  @@map("comments")
+}
+
+model ENewspaper {
+  id          String   @id @default(cuid())
+  titleEn     String
+  titleHi     String
+  language    Language
+  pdfUrl      String
+  publishDate DateTime
+  createdAt   DateTime @default(now())
+
+  @@index([publishDate])
+  @@map("e_newspapers")
+}
+
+model SiteSetting {
+  id    String @id @default(cuid())
+  key   String @unique
+  value String @db.Text
+
+  @@map("site_settings")
+}
