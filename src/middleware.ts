@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
-import { auth } from "@/lib/auth";
+import { getToken } from "next-auth/jwt";
 
 const SUPPORTED_LANGUAGES = ["hindi", "english"];
 const DEFAULT_LANGUAGE = "english";
@@ -20,14 +20,14 @@ export default async function middleware(request: NextRequest) {
             return NextResponse.next();
         }
 
-        const session = await auth();
-        if (!session?.user) {
+        const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
+        if (!token) {
             return NextResponse.redirect(new URL("/admin/login", request.url));
         }
 
         // Role-based protection for user management (Owner/Admin only)
         if (pathname.startsWith("/admin/users")) {
-            const role = (session.user as any).role;
+            const role = token.role as string;
             if (role !== "OWNER" && role !== "ADMIN") {
                 return NextResponse.redirect(new URL("/admin", request.url));
             }
@@ -61,3 +61,4 @@ export const config = {
         "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico)$).*)",
     ],
 };
+
