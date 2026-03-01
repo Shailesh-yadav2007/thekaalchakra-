@@ -72,7 +72,7 @@ const CONSONANTS = new Set([
 ]);
 
 const MATRAS_AND_HALANT = new Set([
-    "ा", "ि", "ी", "ु", "ू", "े", "ै", "ो", "ौ", "ं", "ः", "्",
+    "ा", "ि", "ी", "ु", "ू", "े", "ै", "ो", "ौ", "ं", "ः", "्", "़",
 ]);
 
 export function slugifyHindi(text: string): string {

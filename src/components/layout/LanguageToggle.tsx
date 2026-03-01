@@ -13,7 +13,7 @@ export function LanguageToggle({ lang, alternatePath }: LanguageToggleProps) {
     const pathname = usePathname();
 
     const switchLang = lang === "hindi" ? "english" : "hindi";
-    const switchPath = alternatePath ?? pathname.replace(`/${lang}`, `/${switchLang}`);
+    const switchPath = alternatePath || pathname.replace(`/${lang}`, `/${switchLang}`);
 
     return (
         <Link

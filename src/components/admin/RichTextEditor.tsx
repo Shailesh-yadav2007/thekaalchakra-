@@ -94,6 +94,7 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
             const res = await fetch("/api/upload", { method: "POST", body: fd });
             if (!res.ok) throw new Error("Upload failed");
             const data = await res.json();
+            if (!data.url) throw new Error("Invalid response: missing URL");
             editor.chain().focus().setImage({ src: data.url }).run();
         } catch (err) {
             console.error("Image upload error:", err);

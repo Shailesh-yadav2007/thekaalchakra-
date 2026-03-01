@@ -69,6 +69,7 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
             const res = await fetch("/api/upload", { method: "POST", body: fd });
             if (!res.ok) throw new Error("Upload failed");
             const data = await res.json();
+            if (!data.url) throw new Error("Invalid response: missing URL");
             handleChange("featuredImage", data.url);
         } catch (err) {
             console.error("Upload error:", err);
