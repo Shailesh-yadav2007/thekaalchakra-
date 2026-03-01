@@ -34,7 +34,7 @@ export default function AdminLoginPage() {
         <div className="admin-login-page">
             <div className="admin-login-card">
                 <div className="admin-login-header">
-                    <h1 className="admin-login-title">The Kaalchakra</h1>
+                    <h1 className="admin-login-title">TheKaalchakra</h1>
                     <p className="admin-login-subtitle">Admin Portal</p>
                 </div>
 
@@ -48,7 +48,7 @@ export default function AdminLoginPage() {
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="admin@kaalchakra.news"
+                            placeholder="admin@thekaalchakra.news"
                             required
                             className="form-input"
                         />

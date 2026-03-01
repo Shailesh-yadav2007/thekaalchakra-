@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
 import {
@@ -43,7 +44,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <aside className="admin-sidebar">
             {/* Logo */}
             <div className="admin-sidebar-header">
-                <h2 className="admin-sidebar-logo">Kaalchakra</h2>
+                <Image src="/logo.png" alt="TheKaalchakra Logo" width={56} height={56} className="admin-sidebar-logo-img" />
                 <span className="admin-sidebar-badge">Admin</span>
             </div>
 

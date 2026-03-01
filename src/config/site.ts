@@ -1,5 +1,5 @@
 export const siteConfig = {
-    name: "The Kaalchakra",
+    name: "TheKaalchakra",
     nameHi: "द कालचक्र",
     description: "Your trusted source for breaking news, in-depth articles, and editorials in Hindi and English.",
     descriptionHi: "हिंदी और अंग्रेजी में ब्रेकिंग न्यूज, गहन लेख और सम्पादकीय के लिए आपका विश्वसनीय स्रोत।",
@@ -13,8 +13,8 @@ export const siteConfig = {
         whatsapp: "",
     },
     seo: {
-        titleTemplate: "%s | The Kaalchakra",
-        defaultTitle: "The Kaalchakra - Hindi & English News Portal",
+        titleTemplate: "%s | TheKaalchakra",
+        defaultTitle: "TheKaalchakra - Hindi & English News Portal",
         defaultDescription: "Breaking news, articles, and editorials in Hindi and English.",
     },
 } as const;

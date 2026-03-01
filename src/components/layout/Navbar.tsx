@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useState } from "react";
 import { mainNavItems } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
@@ -23,7 +24,7 @@ export function Navbar({ lang }: NavbarProps) {
         <header className="navbar">
             {/* Top Bar */}
             <div className="navbar-top">
-                <div className="container navbar-top-inner">
+                <div className="navbar-container navbar-top-inner">
                     <time className="navbar-date">
                         {new Date().toLocaleDateString(isHindi ? "hi-IN" : "en-IN", {
                             weekday: "long",
@@ -40,12 +41,11 @@ export function Navbar({ lang }: NavbarProps) {
 
             {/* Main Nav */}
             <div className="navbar-main">
-                <div className="container navbar-main-inner">
-                    {/* Logo */}
+                <div className="navbar-container navbar-main-inner">
+                    {/* Logo & Heading */}
                     <Link href={`/${lang}`} className="navbar-logo">
-                        <span className="navbar-logo-text">
-                            {isHindi ? siteConfig.nameHi : siteConfig.name}
-                        </span>
+                        <Image src="/logo.png" alt="TheKaalchakra Logo" width={100} height={100} className="navbar-logo-img" />
+                        <h4 className="navbar-logo-text font-serif text-sm -ml-6">TheKaalchakra</h4>
                     </Link>
 
                     {/* Desktop Navigation */}
@@ -87,7 +87,7 @@ export function Navbar({ lang }: NavbarProps) {
             {/* Search Bar (expandable) */}
             {isSearchOpen && (
                 <div className="navbar-search">
-                    <div className="container">
+                    <div className="navbar-container">
                         <form action={`/${lang}/search`} className="search-form">
                             <input
                                 type="search"

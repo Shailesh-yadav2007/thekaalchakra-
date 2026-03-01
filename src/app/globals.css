@@ -61,6 +61,12 @@ img {
   padding: 0 1rem;
 }
 
+.navbar-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 /* ─── Navbar ─────────────────────────────────────────────────────── */
 .navbar {
   position: sticky;
@@ -101,12 +107,13 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 1.5rem;
+  gap: 1rem;
 }
 
 .navbar-logo {
   display: flex;
   align-items: center;
+  margin-left: -1.50rem;
 }
 
 .navbar-logo-text {
@@ -118,8 +125,11 @@ img {
 
 .navbar-nav {
   display: flex;
+  flex: 1;
   gap: 0.25rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
+  padding-left: 2rem;
+  justify-content: flex-start;
 }
 
 .navbar-link {

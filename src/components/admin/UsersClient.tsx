@@ -228,7 +228,7 @@ export function UsersClient({ users: initialUsers, currentUserId, currentUserRol
                                     type="email"
                                     value={form.email}
                                     onChange={(e) => setForm(p => ({ ...p, email: e.target.value }))}
-                                    placeholder="rahul@kaalchakra.news"
+                                    placeholder="rahul@thekaalchakra.news"
                                     required
                                     className="form-input"
                                 />
