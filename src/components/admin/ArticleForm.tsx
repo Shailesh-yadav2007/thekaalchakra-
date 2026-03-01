@@ -56,6 +56,11 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
     });
 
     const uploadFile = async (file: File) => {
+        if (file.size > 10 * 1024 * 1024) {
+            alert("File size exceeds 10 MB limit.");
+            return;
+        }
+
         setUploading(true);
         try {
             const fd = new FormData();
@@ -82,7 +87,7 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) uploadFile(file);
+        if (file && file.type.startsWith("image/")) uploadFile(file);
         e.target.value = "";
     };
 

@@ -95,8 +95,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     };
 
     const alternatePath = isHindi
-        ? (article.slugEn ? `/english/${article.category.slugEn}/${article.slugEn}` : `/english/${article.category.slugEn}`)
-        : (article.slugHi ? `/hindi/${article.category.slugHi}/${article.slugHi}` : `/hindi/${article.category.slugHi}`);
+        ? (article.slugEn && article.category.slugEn ? `/english/${article.category.slugEn}/${article.slugEn}` : (article.category.slugEn ? `/english/${article.category.slugEn}` : '/english'))
+        : (article.slugHi && article.category.slugHi ? `/hindi/${article.category.slugHi}/${article.slugHi}` : (article.category.slugHi ? `/hindi/${article.category.slugHi}` : '/hindi'));
 
     return (
         <>

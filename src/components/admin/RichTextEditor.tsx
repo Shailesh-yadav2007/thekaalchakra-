@@ -80,6 +80,12 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
 
     const handleImageUpload = useCallback(async (file: File) => {
         if (!editor) return;
+
+        if (file.size > 10 * 1024 * 1024) {
+            alert("File size exceeds 10 MB limit.");
+            return;
+        }
+
         setImageUploading(true);
         try {
             const fd = new FormData();
@@ -105,12 +111,23 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
 
     const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file) {
+        if (file && file.type.startsWith("image/")) {
             handleImageUpload(file);
-        } else {
+        } else if (!file) {
             // Fallback: prompt for URL if no file selected
             const url = window.prompt("Enter image URL:");
-            if (url && editor) editor.chain().focus().setImage({ src: url }).run();
+            if (url && editor) {
+                try {
+                    const parsed = new URL(url);
+                    if (!["http:", "https:"].includes(parsed.protocol)) {
+                        alert("Only HTTP/HTTPS URLs are allowed.");
+                        return;
+                    }
+                    editor.chain().focus().setImage({ src: url }).run();
+                } catch {
+                    alert("Invalid URL format.");
+                }
+            }
         }
         e.target.value = "";
     }, [editor, handleImageUpload]);
