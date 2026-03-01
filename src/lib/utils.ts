@@ -42,7 +42,7 @@ export function slugify(text: string): string {
 const DEVANAGARI_MAP: Record<string, string> = {
     // Multi-character sequences MUST come first
     "क्ष": "ksh", "ज्ञ": "gya",
-    "ढ़": "rh", "ड़": "r",
+    "ढ़": "rh", "ड़": "r", "ज़": "z", "फ़": "f", "क़": "q", "ख़": "kh", "ग़": "gh",
     "अं": "an", "अः": "ah",
     // Single vowels
     "अ": "a", "आ": "aa", "इ": "i", "ई": "ee", "उ": "u", "ऊ": "oo",
@@ -56,7 +56,7 @@ const DEVANAGARI_MAP: Record<string, string> = {
     "य": "y", "र": "r", "ल": "l", "व": "v",
     "श": "sh", "ष": "sh", "स": "s", "ह": "h", "ळ": "l",
     // Matras (vowel signs)
-    "ा": "a", "ि": "i", "ी": "ee", "ु": "u", "ू": "oo",
+    "ा": "aa", "ि": "i", "ी": "ee", "ु": "u", "ू": "oo",
     "े": "e", "ै": "ai", "ो": "o", "ौ": "au",
     "ं": "n", "ः": "h", "्": "",
     // Numerals
