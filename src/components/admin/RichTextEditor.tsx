@@ -111,22 +111,11 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
 
     const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file && file.type.startsWith("image/")) {
-            handleImageUpload(file);
-        } else if (!file) {
-            // Fallback: prompt for URL if no file selected
-            const url = window.prompt("Enter image URL:");
-            if (url && editor) {
-                try {
-                    const parsed = new URL(url);
-                    if (!["http:", "https:"].includes(parsed.protocol)) {
-                        alert("Only HTTP/HTTPS URLs are allowed.");
-                        return;
-                    }
-                    editor.chain().focus().setImage({ src: url }).run();
-                } catch {
-                    alert("Invalid URL format.");
-                }
+        if (file) {
+            if (!file.type.startsWith("image/")) {
+                alert("Please select an image file (JPG, PNG, WebP, or GIF).");
+            } else {
+                handleImageUpload(file);
             }
         }
         e.target.value = "";

@@ -82,12 +82,24 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
         e.preventDefault();
         setDragOver(false);
         const file = e.dataTransfer.files[0];
-        if (file && file.type.startsWith("image/")) uploadFile(file);
+        if (file) {
+            if (!file.type.startsWith("image/")) {
+                alert("Please select an image file (JPG, PNG, WebP, or GIF).");
+            } else {
+                uploadFile(file);
+            }
+        }
     };
 
     const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
-        if (file && file.type.startsWith("image/")) uploadFile(file);
+        if (file) {
+            if (!file.type.startsWith("image/")) {
+                alert("Please select an image file (JPG, PNG, WebP, or GIF).");
+            } else {
+                uploadFile(file);
+            }
+        }
         e.target.value = "";
     };
 
