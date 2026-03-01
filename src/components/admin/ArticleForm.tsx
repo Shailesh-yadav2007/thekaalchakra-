@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { slugify } from "@/lib/utils";
+import { slugify, slugifyHindi } from "@/lib/utils";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
+import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
 
 interface Category {
     id: string;
@@ -30,6 +31,9 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
     const isEdit = !!article;
     const [activeTab, setActiveTab] = useState<"english" | "hindi">("english");
     const [saving, setSaving] = useState(false);
+    const [uploading, setUploading] = useState(false);
+    const [dragOver, setDragOver] = useState(false);
+    const fileInputRef = useRef<HTMLInputElement>(null);
 
     const [formData, setFormData] = useState({
         titleEn: article?.titleEn || "",
@@ -51,6 +55,37 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
         status: article?.status || "DRAFT",
     });
 
+    const uploadFile = async (file: File) => {
+        setUploading(true);
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("bucket", "images");
+            const res = await fetch("/api/upload", { method: "POST", body: fd });
+            if (!res.ok) throw new Error("Upload failed");
+            const data = await res.json();
+            handleChange("featuredImage", data.url);
+        } catch (err) {
+            console.error("Upload error:", err);
+            alert("Failed to upload image. Please try again.");
+        } finally {
+            setUploading(false);
+        }
+    };
+
+    const handleFileDrop = (e: React.DragEvent) => {
+        e.preventDefault();
+        setDragOver(false);
+        const file = e.dataTransfer.files[0];
+        if (file && file.type.startsWith("image/")) uploadFile(file);
+    };
+
+    const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) uploadFile(file);
+        e.target.value = "";
+    };
+
     const handleChange = (field: string, value: any) => {
         setFormData((prev) => {
             const updated = { ...prev, [field]: value };
@@ -59,7 +94,7 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
                 updated.slugEn = slugify(value);
             }
             if (field === "titleHi" && !isEdit) {
-                updated.slugHi = slugify(value) || `hi-${Date.now()}`;
+                updated.slugHi = slugifyHindi(value) || `hi-${Date.now()}`;
             }
             return updated;
         });
@@ -199,7 +234,7 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
                                     value={formData.bodyHi}
                                     onChange={(html) => handleChange("bodyHi", html)}
                                     placeholder="हिंदी में लेख की विषयवस्तु..."
-                                    dir="rtl"
+                                    dir="ltr"
                                 />
                             </div>
                         </>
@@ -251,20 +286,63 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
                     {/* Featured Image */}
                     <div className="form-card">
                         <h3 className="form-card-title">Featured Image</h3>
-                        <input
-                            type="url"
-                            value={formData.featuredImage}
-                            onChange={(e) => handleChange("featuredImage", e.target.value)}
-                            className="form-input"
-                            placeholder="https://..."
-                        />
-                        {formData.featuredImage && (
-                            <img
-                                src={formData.featuredImage}
-                                alt="Preview"
-                                className="form-image-preview"
-                            />
+
+                        {formData.featuredImage ? (
+                            <div className="image-preview-wrapper">
+                                <img
+                                    src={formData.featuredImage}
+                                    alt="Preview"
+                                    className="form-image-preview"
+                                />
+                                <button
+                                    type="button"
+                                    className="image-remove-btn"
+                                    onClick={() => handleChange("featuredImage", "")}
+                                    title="Remove image"
+                                >
+                                    <X size={14} />
+                                </button>
+                            </div>
+                        ) : (
+                            <div
+                                className={`image-dropzone ${dragOver ? "dragover" : ""} ${uploading ? "uploading" : ""}`}
+                                onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+                                onDragLeave={() => setDragOver(false)}
+                                onDrop={handleFileDrop}
+                                onClick={() => !uploading && fileInputRef.current?.click()}
+                            >
+                                <input
+                                    ref={fileInputRef}
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handleFileSelect}
+                                    hidden
+                                />
+                                {uploading ? (
+                                    <>
+                                        <Loader2 size={24} className="spin" />
+                                        <span>Uploading...</span>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Upload size={24} />
+                                        <span>Click or drag image here</span>
+                                        <span className="dropzone-hint">JPG, PNG, WebP, GIF — max 10 MB</span>
+                                    </>
+                                )}
+                            </div>
                         )}
+
+                        <div className="form-group" style={{ marginTop: "0.5rem" }}>
+                            <label>Or paste image URL</label>
+                            <input
+                                type="url"
+                                value={formData.featuredImage}
+                                onChange={(e) => handleChange("featuredImage", e.target.value)}
+                                className="form-input"
+                                placeholder="https://..."
+                            />
+                        </div>
                     </div>
 
                     {/* Options */}

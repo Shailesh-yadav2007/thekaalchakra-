@@ -6,13 +6,14 @@ import type { SupportedLanguage } from "@/lib/utils";
 
 interface LanguageToggleProps {
     lang: SupportedLanguage;
+    alternatePath?: string;
 }
 
-export function LanguageToggle({ lang }: LanguageToggleProps) {
+export function LanguageToggle({ lang, alternatePath }: LanguageToggleProps) {
     const pathname = usePathname();
 
     const switchLang = lang === "hindi" ? "english" : "hindi";
-    const switchPath = pathname.replace(`/${lang}`, `/${switchLang}`);
+    const switchPath = alternatePath ?? pathname.replace(`/${lang}`, `/${switchLang}`);
 
     return (
         <Link
@@ -30,3 +31,4 @@ export function LanguageToggle({ lang }: LanguageToggleProps) {
         </Link>
     );
 }
+

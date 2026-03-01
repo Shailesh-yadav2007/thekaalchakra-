@@ -6,6 +6,7 @@ import { mainNavItems } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
 import { Search, Menu, X, Moon, Sun } from "lucide-react";
+import { useAlternatePath } from "@/components/layout/AlternatePathContext";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface NavbarProps {
@@ -15,6 +16,7 @@ interface NavbarProps {
 export function Navbar({ lang }: NavbarProps) {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isSearchOpen, setIsSearchOpen] = useState(false);
+    const { alternatePath } = useAlternatePath();
     const isHindi = lang === "hindi";
 
     return (
@@ -31,7 +33,7 @@ export function Navbar({ lang }: NavbarProps) {
                         })}
                     </time>
                     <div className="navbar-top-actions">
-                        <LanguageToggle lang={lang} />
+                        <LanguageToggle lang={lang} alternatePath={alternatePath} />
                     </div>
                 </div>
             </div>

@@ -1,5 +1,6 @@
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
+import { AlternatePathProvider } from "@/components/layout/AlternatePathContext";
 import { isValidLanguage } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
@@ -16,10 +17,12 @@ export default async function LangLayout({ children, params }: LangLayoutProps) 
     }
 
     return (
-        <div className="min-h-screen flex flex-col">
-            <Navbar lang={lang} />
-            <main className="flex-1">{children}</main>
-            <Footer lang={lang} />
-        </div>
+        <AlternatePathProvider>
+            <div className="min-h-screen flex flex-col">
+                <Navbar lang={lang} />
+                <main className="flex-1">{children}</main>
+                <Footer lang={lang} />
+            </div>
+        </AlternatePathProvider>
     );
 }

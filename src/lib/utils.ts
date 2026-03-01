@@ -37,6 +37,36 @@ export function slugify(text: string): string {
 }
 
 /**
+ * Transliterate Hindi (Devanagari) text to a Roman slug.
+ */
+const DEVANAGARI_MAP: Record<string, string> = {
+    "अ": "a", "आ": "aa", "इ": "i", "ई": "ee", "उ": "u", "ऊ": "oo",
+    "ए": "e", "ऐ": "ai", "ओ": "o", "औ": "au", "अं": "an", "अः": "ah",
+    "क": "k", "ख": "kh", "ग": "g", "घ": "gh", "ङ": "ng",
+    "च": "ch", "छ": "chh", "ज": "j", "झ": "jh", "ञ": "ny",
+    "ट": "t", "ठ": "th", "ड": "d", "ढ": "dh", "ण": "n",
+    "त": "t", "थ": "th", "द": "d", "ध": "dh", "न": "n",
+    "प": "p", "फ": "ph", "ब": "b", "भ": "bh", "म": "m",
+    "य": "y", "र": "r", "ल": "l", "व": "v", "श": "sh",
+    "ष": "sh", "स": "s", "ह": "h", "ळ": "l", "क्ष": "ksh", "ज्ञ": "gya",
+    "ा": "a", "ि": "i", "ी": "ee", "ु": "u", "ू": "oo",
+    "े": "e", "ै": "ai", "ो": "o", "ौ": "au", "ं": "n", "ः": "h",
+    "्": "", "ढ़": "rh", "ड़": "r",
+    "०": "0", "१": "1", "२": "2", "३": "3", "४": "4",
+    "५": "5", "६": "6", "७": "7", "८": "8", "९": "9",
+};
+
+export function slugifyHindi(text: string): string {
+    let result = text;
+    // Replace known Devanagari chars with Roman equivalents
+    for (const [deva, roman] of Object.entries(DEVANAGARI_MAP)) {
+        result = result.split(deva).join(roman);
+    }
+    return slugify(result);
+}
+
+
+/**
  * Truncate text to a given length.
  */
 export function truncate(text: string, length: number): string {

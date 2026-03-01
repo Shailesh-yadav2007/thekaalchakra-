@@ -7,9 +7,9 @@ import Image from "@tiptap/extension-image";
 import {
     Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
     List, ListOrdered, Quote, Minus, Link as LinkIcon, Image as ImageIcon,
-    Undo, Redo, RemoveFormatting, AlignLeft, AlignCenter, AlignRight,
+    Undo, Redo, RemoveFormatting, Loader2,
 } from "lucide-react";
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 interface RichTextEditorProps {
     value: string;
@@ -19,6 +19,9 @@ interface RichTextEditorProps {
 }
 
 export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: RichTextEditorProps) {
+    const [imageUploading, setImageUploading] = useState(false);
+    const imageInputRef = useRef<HTMLInputElement>(null);
+
     const editor = useEditor({
         immediatelyRender: false,
         extensions: [
@@ -75,16 +78,56 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
         }
     }, [editor]);
 
-    const addImage = useCallback(() => {
+    const handleImageUpload = useCallback(async (file: File) => {
         if (!editor) return;
-        const url = window.prompt("Enter image URL:");
-        if (url) editor.chain().focus().setImage({ src: url }).run();
+        setImageUploading(true);
+        try {
+            const fd = new FormData();
+            fd.append("file", file);
+            fd.append("bucket", "images");
+            const res = await fetch("/api/upload", { method: "POST", body: fd });
+            if (!res.ok) throw new Error("Upload failed");
+            const data = await res.json();
+            editor.chain().focus().setImage({ src: data.url }).run();
+        } catch (err) {
+            console.error("Image upload error:", err);
+            alert("Failed to upload image. Please try again.");
+        } finally {
+            setImageUploading(false);
+        }
     }, [editor]);
+
+    const addImage = useCallback(() => {
+        if (!editor || imageUploading) return;
+        // Open file picker
+        imageInputRef.current?.click();
+    }, [editor, imageUploading]);
+
+    const handleImageFileSelect = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (file) {
+            handleImageUpload(file);
+        } else {
+            // Fallback: prompt for URL if no file selected
+            const url = window.prompt("Enter image URL:");
+            if (url && editor) editor.chain().focus().setImage({ src: url }).run();
+        }
+        e.target.value = "";
+    }, [editor, handleImageUpload]);
 
     if (!editor) return null;
 
     return (
         <div className="tiptap-wrapper">
+            {/* Hidden file input for image upload */}
+            <input
+                ref={imageInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleImageFileSelect}
+                hidden
+            />
+
             {/* ── Toolbar ── */}
             <div className="tiptap-toolbar">
                 {/* History */}
@@ -153,8 +196,8 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
                 <ToolBtn onClick={setLink} active={editor.isActive("link")} title="Insert link">
                     <LinkIcon size={15} />
                 </ToolBtn>
-                <ToolBtn onClick={addImage} title="Insert image">
-                    <ImageIcon size={15} />
+                <ToolBtn onClick={addImage} disabled={imageUploading} title="Upload image">
+                    {imageUploading ? <Loader2 size={15} className="spin" /> : <ImageIcon size={15} />}
                 </ToolBtn>
 
                 <div className="tiptap-divider" />
@@ -200,3 +243,4 @@ function ToolBtn({
         </button>
     );
 }
+

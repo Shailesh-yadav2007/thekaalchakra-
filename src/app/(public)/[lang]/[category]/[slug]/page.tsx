@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import { ArticleContent } from "@/components/article/ArticleContent";
 import { ShareButtons } from "@/components/article/ShareButtons";
 import { RelatedStories } from "@/components/article/RelatedStories";
+import { SetAlternatePath } from "@/components/layout/SetAlternatePath";
 
 import type { SupportedLanguage } from "@/lib/utils";
 
@@ -93,8 +94,13 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
         },
     };
 
+    const alternatePath = isHindi
+        ? (article.slugEn ? `/english/${article.category.slugEn}/${article.slugEn}` : `/english/${article.category.slugEn}`)
+        : (article.slugHi ? `/hindi/${article.category.slugHi}/${article.slugHi}` : `/hindi/${article.category.slugHi}`);
+
     return (
         <>
+            <SetAlternatePath path={alternatePath} />
             <script
                 type="application/ld+json"
                 dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
