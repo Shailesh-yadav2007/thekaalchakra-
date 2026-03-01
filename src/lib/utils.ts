@@ -64,11 +64,39 @@ const DEVANAGARI_MAP: Record<string, string> = {
     "५": "5", "६": "6", "७": "7", "८": "8", "९": "9",
 };
 
+const CONSONANTS = new Set([
+    "क", "ख", "ग", "घ", "ङ", "च", "छ", "ज", "झ", "ञ",
+    "ट", "ठ", "ड", "ढ", "ण", "त", "थ", "द", "ध", "न",
+    "प", "फ", "ब", "भ", "म", "य", "र", "ल", "व",
+    "श", "ष", "स", "ह", "ळ", "ड़", "ढ़",
+]);
+
+const MATRAS_AND_HALANT = new Set([
+    "ा", "ि", "ी", "ु", "ू", "े", "ै", "ो", "ौ", "ं", "ः", "्",
+]);
+
 export function slugifyHindi(text: string): string {
-    let result = text;
-    // Replace known Devanagari chars with Roman equivalents
-    for (const [deva, roman] of Object.entries(DEVANAGARI_MAP)) {
-        result = result.split(deva).join(roman);
+    let result = "";
+    // Handle multi-char sequences first
+    let processed = text;
+    for (const seq of ["क्ष", "ज्ञ", "ढ़", "ड़", "अं", "अः"]) {
+        processed = processed.split(seq).join(DEVANAGARI_MAP[seq]);
+    }
+
+    for (let i = 0; i < processed.length; i++) {
+        const char = processed[i];
+        const nextChar = processed[i + 1];
+        const mapped = DEVANAGARI_MAP[char];
+
+        if (mapped !== undefined) {
+            result += mapped;
+            // Add inherent 'a' for consonants not followed by matra/halant
+            if (CONSONANTS.has(char) && !MATRAS_AND_HALANT.has(nextChar)) {
+                result += "a";
+            }
+        } else {
+            result += char;
+        }
     }
     return slugify(result);
 }
