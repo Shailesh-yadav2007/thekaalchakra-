@@ -1,10 +1,11 @@
 import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth";
+import type { NextRequest } from "next/server";
+import { getToken } from "next-auth/jwt";
 
 const SUPPORTED_LANGUAGES = ["hindi", "english"];
 const DEFAULT_LANGUAGE = "english";
 
-export default auth((request) => {
+export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;
 
     // ─── Redirect root to default language ──────────────────────────
@@ -19,14 +20,39 @@ export default auth((request) => {
             return NextResponse.next();
         }
 
-        const session = request.auth;
-        if (!session?.user) {
+        // On Vercel custom domains (HTTPS), NextAuth prefixes the cookie with __Secure-
+        // We explicitly tell it to check both to ensure domain compatibility.
+        const useSecureCookies = request.url.startsWith("https://");
+        const cookieName = useSecureCookies
+            ? "__Secure-authjs.session-token"
+            : "authjs.session-token"; // fallback for next-auth v5 beta naming
+
+        const token = await getToken({
+            req: request,
+            secret: process.env.AUTH_SECRET,
+            cookieName: cookieName,
+        });
+
+        // Try the legacy next-auth.session-token if authjs.session-token fails
+        const legacyToken = !token
+            ? await getToken({
+                req: request,
+                secret: process.env.AUTH_SECRET,
+                cookieName: useSecureCookies
+                    ? "__Secure-next-auth.session-token"
+                    : "next-auth.session-token",
+            })
+            : null;
+
+        const finalToken = token || legacyToken;
+
+        if (!finalToken) {
             return NextResponse.redirect(new URL("/admin/login", request.url));
         }
 
         // Role-based protection for user management (Owner/Admin only)
         if (pathname.startsWith("/admin/users")) {
-            const role = (session.user as any).role as string;
+            const role = finalToken.role as string;
             if (role !== "OWNER" && role !== "ADMIN") {
                 return NextResponse.redirect(new URL("/admin", request.url));
             }
@@ -46,7 +72,7 @@ export default auth((request) => {
     }
 
     return NextResponse.next();
-});
+}
 
 export const config = {
     matcher: [
