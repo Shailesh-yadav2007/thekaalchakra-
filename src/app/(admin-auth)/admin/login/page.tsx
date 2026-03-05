@@ -16,17 +16,22 @@ export default function AdminLoginPage() {
         setLoading(true);
         setError("");
 
-        const result = await signIn("credentials", {
-            email,
-            password,
-            redirect: false,
-        });
+        try {
+            const result = await signIn("credentials", {
+                email,
+                password,
+                redirect: false,
+            });
 
-        if (result?.error) {
-            setError("Invalid email or password");
+            if (result?.error) {
+                setError("Invalid email or password");
+                setLoading(false);
+            } else {
+                router.replace("/admin");
+            }
+        } catch (err) {
+            setError("Something went wrong. Please try again.");
             setLoading(false);
-        } else {
-            router.push("/admin");
         }
     };
 
