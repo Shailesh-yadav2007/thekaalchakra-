@@ -1,11 +1,10 @@
 import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
-import { getToken } from "next-auth/jwt";
+import { auth } from "@/lib/auth";
 
 const SUPPORTED_LANGUAGES = ["hindi", "english"];
 const DEFAULT_LANGUAGE = "english";
 
-export default async function middleware(request: NextRequest) {
+export default auth((request) => {
     const { pathname } = request.nextUrl;
 
     // ─── Redirect root to default language ──────────────────────────
@@ -20,14 +19,14 @@ export default async function middleware(request: NextRequest) {
             return NextResponse.next();
         }
 
-        const token = await getToken({ req: request, secret: process.env.AUTH_SECRET });
-        if (!token) {
+        const session = request.auth;
+        if (!session?.user) {
             return NextResponse.redirect(new URL("/admin/login", request.url));
         }
 
         // Role-based protection for user management (Owner/Admin only)
         if (pathname.startsWith("/admin/users")) {
-            const role = token.role as string;
+            const role = (session.user as any).role as string;
             if (role !== "OWNER" && role !== "ADMIN") {
                 return NextResponse.redirect(new URL("/admin", request.url));
             }
@@ -47,7 +46,7 @@ export default async function middleware(request: NextRequest) {
     }
 
     return NextResponse.next();
-}
+});
 
 export const config = {
     matcher: [
