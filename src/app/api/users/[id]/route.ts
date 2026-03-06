@@ -55,7 +55,7 @@ export async function PATCH(
     return NextResponse.json(user);
 }
 
-// DELETE /api/users/[id] — delete user (Owner only)
+// DELETE /api/users/[id] — delete user (Owner/Admin only)
 export async function DELETE(
     request: NextRequest,
     { params }: { params: Promise<{ id: string }> }
@@ -64,14 +64,28 @@ export async function DELETE(
     const callerRole = (session?.user as any)?.role;
     const callerId = (session?.user as any)?.id;
 
-    if (!session?.user || callerRole !== "OWNER") {
-        return NextResponse.json({ error: "Only Owner can delete users" }, { status: 403 });
+    if (!session?.user || (callerRole !== "OWNER" && callerRole !== "ADMIN")) {
+        return NextResponse.json({ error: "Only Owner and Admin can delete users" }, { status: 403 });
     }
 
     const { id } = await params;
 
     if (id === callerId) {
         return NextResponse.json({ error: "Cannot delete yourself" }, { status: 400 });
+    }
+
+    const targetUser = await prisma.user.findUnique({ where: { id }, select: { role: true } });
+    if (!targetUser) {
+        return NextResponse.json({ error: "User not found" }, { status: 404 });
+    }
+
+    if (callerRole === "ADMIN" && targetUser.role === "OWNER") {
+        return NextResponse.json({ error: "Admin cannot delete Owner" }, { status: 403 });
+    }
+
+    // Optional constraint: consider if Admin shouldn't be able to delete other Admins
+    if (callerRole === "ADMIN" && targetUser.role === "ADMIN") {
+        return NextResponse.json({ error: "Admin cannot delete another Admin" }, { status: 403 });
     }
 
     await prisma.user.delete({ where: { id } });

@@ -61,8 +61,8 @@ export async function POST(request: NextRequest) {
     const data = validation.data;
     const userRole = (session.user as any).role;
 
-    // Reporters can only create drafts
-    if (userRole === "REPORTER" && data.status === "PUBLISHED") {
+    // Reporters and Editors can only create drafts or submit for review
+    if ((userRole === "REPORTER" || userRole === "EDITOR") && data.status === "PUBLISHED") {
         data.status = "PENDING_REVIEW";
     }
 

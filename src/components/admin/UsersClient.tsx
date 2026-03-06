@@ -48,7 +48,7 @@ export function UsersClient({ users: initialUsers, currentUserId, currentUserRol
     const [formLoading, setFormLoading] = useState(false);
 
     const canCreate = currentUserRole === "OWNER" || currentUserRole === "ADMIN";
-    const canDelete = currentUserRole === "OWNER";
+    const canDelete = currentUserRole === "OWNER" || currentUserRole === "ADMIN";
     const assignable = ASSIGNABLE_ROLES[currentUserRole];
 
     async function handleAddUser(e: React.FormEvent) {

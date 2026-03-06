@@ -28,9 +28,8 @@ export function ArticlesClient({ initialArticles, userRole }: Props) {
     const [error, setError] = useState("");
 
     function canDelete(article: Article): boolean {
-        if (userRole === "OWNER" || userRole === "ADMIN") return true;
-        if (userRole === "EDITOR") return article.status === "DRAFT";
-        return false; // REPORTER cannot delete
+        // Only OWNER and ADMIN can delete articles
+        return userRole === "OWNER" || userRole === "ADMIN";
     }
 
     async function handleDelete(id: string, title: string) {

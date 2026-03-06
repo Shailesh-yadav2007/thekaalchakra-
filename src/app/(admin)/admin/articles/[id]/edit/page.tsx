@@ -1,12 +1,16 @@
 import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 import { ArticleForm } from "@/components/admin/ArticleForm";
+import { auth } from "@/lib/auth";
 
 interface EditArticlePageProps {
     params: Promise<{ id: string }>;
 }
 
 export default async function EditArticlePage({ params }: EditArticlePageProps) {
+    const session = await auth();
+    const userRole = (session?.user as any)?.role;
+
     const { id } = await params;
 
     const [article, categories, tags] = await Promise.all([
@@ -29,6 +33,7 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
                 article={article}
                 categories={categories}
                 tags={tags}
+                userRole={userRole}
             />
         </div>
     );

@@ -59,7 +59,7 @@ export function Navbar({ lang }: NavbarProps) {
                                 {isHindi ? item.labelHi : item.label}
                             </Link>
                         ))}
-                        <Link href={`/${lang}/e-newspaper`} className="navbar-link">
+                        <Link href={`/${lang}/e-paper`} className="navbar-link">
                             {isHindi ? "ई-अखबार" : "E-Paper"}
                         </Link>
                     </nav>
@@ -119,7 +119,7 @@ export function Navbar({ lang }: NavbarProps) {
                             </Link>
                         ))}
                         <Link
-                            href={`/${lang}/e-newspaper`}
+                            href={`/${lang}/e-paper`}
                             className="mobile-nav-link"
                             onClick={() => setIsMenuOpen(false)}
                         >

@@ -48,7 +48,7 @@ export function Footer({ lang }: FooterProps) {
                         </h3>
                         <ul className="footer-links">
                             <li>
-                                <Link href={`/${lang}/e-newspaper`} className="footer-link">
+                                <Link href={`/${lang}/e-paper`} className="footer-link">
                                     {isHindi ? "ई-अखबार" : "E-Newspaper"}
                                 </Link>
                             </li>

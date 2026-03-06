@@ -24,9 +24,10 @@ interface ArticleFormProps {
     article?: any;
     categories: Category[];
     tags: Tag[];
+    userRole?: string;
 }
 
-export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
+export function ArticleForm({ article, categories, tags, userRole }: ArticleFormProps) {
     const router = useRouter();
     const isEdit = !!article;
     const [activeTab, setActiveTab] = useState<"english" | "hindi">("english");
@@ -273,7 +274,9 @@ export function ArticleForm({ article, categories, tags }: ArticleFormProps) {
                             >
                                 <option value="DRAFT">Draft</option>
                                 <option value="PENDING_REVIEW">Pending Review</option>
-                                <option value="PUBLISHED">Published</option>
+                                {(userRole === "ADMIN" || userRole === "OWNER") && (
+                                    <option value="PUBLISHED">Published</option>
+                                )}
                             </select>
                         </div>
                         <div className="form-actions">

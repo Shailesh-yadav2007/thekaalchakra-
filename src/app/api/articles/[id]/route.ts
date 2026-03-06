@@ -50,15 +50,20 @@ export async function PUT(
         if (existing?.authorId !== (session.user as any).id) {
             return NextResponse.json({ error: "Forbidden" }, { status: 403 });
         }
-        // Reporters cannot publish
-        if (body.status === "PUBLISHED") {
-            body.status = "PENDING_REVIEW";
-        }
+    }
+
+    // Reporters and Editors cannot publish
+    if ((userRole === "REPORTER" || userRole === "EDITOR") && body.status === "PUBLISHED") {
+        body.status = "PENDING_REVIEW";
     }
 
     // Set editor and publishedAt
     const updateData: any = { ...body };
-    if (body.status === "PUBLISHED" && (userRole === "EDITOR" || userRole === "ADMIN" || userRole === "OWNER")) {
+    delete updateData.authorId; // Never allow updating the original author via PUT
+
+    // Only Admin or Owner can actually publish via the PUT logic above.
+    // If the status is PUBLISHED, we record who acted as the editor (publisher) and the time
+    if (body.status === "PUBLISHED" && (userRole === "ADMIN" || userRole === "OWNER")) {
         updateData.editorId = (session.user as any).id;
         updateData.publishedAt = new Date();
     }
@@ -83,29 +88,12 @@ export async function DELETE(
 
     const userRole = (session.user as any).role;
 
-    // Reporters cannot delete anything
-    if (userRole === "REPORTER") {
-        return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    // Only OWNER and ADMIN can delete articles
+    if (userRole !== "OWNER" && userRole !== "ADMIN") {
+        return NextResponse.json({ error: "Only Owner and Admin can delete articles" }, { status: 403 });
     }
 
     const { id } = await params;
-
-    // Editors can only delete DRAFT articles
-    if (userRole === "EDITOR") {
-        const article = await prisma.article.findUnique({
-            where: { id },
-            select: { status: true },
-        });
-        if (!article) {
-            return NextResponse.json({ error: "Not found" }, { status: 404 });
-        }
-        if (article.status !== "DRAFT") {
-            return NextResponse.json(
-                { error: "Editors can only delete draft articles" },
-                { status: 403 }
-            );
-        }
-    }
 
     await prisma.article.delete({ where: { id } });
     return NextResponse.json({ success: true });
