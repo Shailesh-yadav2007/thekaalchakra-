@@ -6,6 +6,7 @@ import { useState } from "react";
 import { mainNavItems } from "@/config/navigation";
 import { siteConfig } from "@/config/site";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { Search, Menu, X, Moon, Sun } from "lucide-react";
 import { useAlternatePath } from "@/components/layout/AlternatePathContext";
 import type { SupportedLanguage } from "@/lib/utils";
@@ -66,6 +67,7 @@ export function Navbar({ lang }: NavbarProps) {
 
                     {/* Actions */}
                     <div className="navbar-actions">
+                        <ThemeToggle />
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
                             className="navbar-icon-btn"

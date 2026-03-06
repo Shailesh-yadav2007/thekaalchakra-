@@ -44,8 +44,13 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
         <aside className="admin-sidebar">
             {/* Logo */}
             <div className="admin-sidebar-header">
-                <Image src="/logo.png" alt="TheKaalchakra Logo" width={56} height={56} className="admin-sidebar-logo-img" />
-                <span className="admin-sidebar-badge">Admin</span>
+                <Link href="/admin" className="flex items-center gap-2">
+                    <Image src="/logo.png" alt="TheKaalchakra Logo" width={40} height={40} className="admin-sidebar-logo-img" />
+                    <div className="flex flex-col">
+                        <span className="admin-sidebar-logo font-serif -ml-2 text-[1.1rem]">TheKaalchakra</span>
+                        <span className="admin-sidebar-badge w-fit ml-[-0.25rem]">Admin</span>
+                    </div>
+                </Link>
             </div>
 
             {/* Navigation */}
