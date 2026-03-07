@@ -13,8 +13,8 @@ export default async function ArticlesPage({
     const { status, page: pageParam, q } = await searchParams;
     const page = Math.max(1, parseInt(pageParam || "1"));
     const pageSize = 20;
-    const userRole = (session?.user as any)?.role;
-    const userId = (session?.user as any)?.id;
+    const userRole = session?.user?.role;
+    const userId = session?.user?.id;
 
     // Build filter
     const where: any = {};
@@ -27,7 +27,7 @@ export default async function ArticlesPage({
     }
     // Reporters can only see their own articles
     if (userRole === "REPORTER") {
-        where.authorId = userId;
+        where.authorId = userId ?? "";
     }
 
     const [articles, total] = await Promise.all([
@@ -89,7 +89,7 @@ export default async function ArticlesPage({
             {/* Articles Table (client for delete) */}
             <ArticlesClient
                 initialArticles={serialized as any}
-                userRole={userRole}
+                userRole={(userRole as any) || "REPORTER"}
             />
 
             {/* Pagination */}

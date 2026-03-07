@@ -12,10 +12,10 @@ import {
 export default async function AdminDashboard() {
     const session = await auth();
 
-    const userRole = (session?.user as any)?.role;
-    const userId = (session?.user as any)?.id;
+    const userRole = session?.user?.role;
+    const userId = session?.user?.id;
 
-    const baseWhere = userRole === "REPORTER" ? { authorId: userId } : {};
+    const baseWhere = userRole === "REPORTER" ? { authorId: userId ?? "" } : {};
 
     const [totalArticles, publishedArticles, pendingArticles, totalComments] =
         await Promise.all([

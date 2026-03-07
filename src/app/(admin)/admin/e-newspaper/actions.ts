@@ -21,7 +21,7 @@ export async function createENewspaper(data: {
 
     // Validate inputs
     if (!data.titleEn || !data.titleHi || !data.pdfUrl || !data.publishDate) {
-        throw new Error("Missing required fields");
+        return { success: false, error: "Missing required fields" };
     }
 
     try {

@@ -3,6 +3,8 @@ import { auth } from "@/lib/auth";
 import { createAdminClient } from "@/lib/supabase";
 
 // POST /api/upload - Upload file to Supabase Storage
+const ALLOWED_BUCKETS = ["images", "e-newspapers"];
+
 export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user) {
@@ -13,7 +15,11 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
     const bucket = (formData.get("bucket") as string) || "images";
 
-    const role = (session.user as any)?.role;
+    if (!ALLOWED_BUCKETS.includes(bucket)) {
+        return NextResponse.json({ error: "Invalid bucket" }, { status: 400 });
+    }
+
+    const role = session.user.role;
     if (bucket === "e-newspapers" && role !== "ADMIN" && role !== "OWNER") {
         return NextResponse.json({ error: "Unauthorized to upload e-newspapers" }, { status: 403 });
     }
