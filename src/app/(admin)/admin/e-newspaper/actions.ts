@@ -20,8 +20,12 @@ export async function createENewspaper(data: {
     }
 
     // Validate inputs
-    if (!data.titleEn || !data.titleHi || !data.pdfUrl || !data.publishDate) {
+    if (!data.titleEn || !data.titleHi || !data.pdfUrl || !data.publishDate || !data.language) {
         return { success: false, error: "Missing required fields" };
+    }
+
+    if (data.language !== "HINDI" && data.language !== "ENGLISH") {
+        return { success: false, error: "Invalid language value" };
     }
 
     try {
