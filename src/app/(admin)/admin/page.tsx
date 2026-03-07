@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import {
     FileText,
@@ -15,7 +16,11 @@ export default async function AdminDashboard() {
     const userRole = session?.user?.role;
     const userId = session?.user?.id;
 
-    const baseWhere = userRole === "REPORTER" ? { authorId: userId ?? "" } : {};
+    if (!session || !userId) {
+        redirect("/admin/login");
+    }
+
+    const baseWhere = userRole === "REPORTER" ? { authorId: userId } : {};
 
     const [totalArticles, publishedArticles, pendingArticles, totalComments] =
         await Promise.all([

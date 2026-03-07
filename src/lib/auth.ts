@@ -47,7 +47,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     callbacks: {
         async jwt({ token, user }) {
             if (user) {
-                token.id = user.id ?? "";
+                if (!user.id) {
+                    throw new Error("User ID is required");
+                }
+                token.id = user.id;
                 token.role = user.role;
             }
             return token;

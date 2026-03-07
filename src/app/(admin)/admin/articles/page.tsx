@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { ArticlesClient } from "@/components/admin/ArticlesClient";
@@ -13,8 +14,13 @@ export default async function ArticlesPage({
     const { status, page: pageParam, q } = await searchParams;
     const page = Math.max(1, parseInt(pageParam || "1"));
     const pageSize = 20;
+
     const userRole = session?.user?.role;
     const userId = session?.user?.id;
+
+    if (!session || !userId) {
+        redirect("/admin/login");
+    }
 
     // Build filter
     const where: any = {};
@@ -27,7 +33,7 @@ export default async function ArticlesPage({
     }
     // Reporters can only see their own articles
     if (userRole === "REPORTER") {
-        where.authorId = userId ?? "";
+        where.authorId = userId;
     }
 
     const [articles, total] = await Promise.all([
@@ -89,7 +95,7 @@ export default async function ArticlesPage({
             {/* Articles Table (client for delete) */}
             <ArticlesClient
                 initialArticles={serialized as any}
-                userRole={(userRole as any) || "REPORTER"}
+                userRole={userRole as "OWNER" | "ADMIN" | "EDITOR" | "REPORTER"}
             />
 
             {/* Pagination */}
