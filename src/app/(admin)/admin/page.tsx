@@ -8,6 +8,7 @@ import {
     Clock,
     MessageSquare,
     Plus,
+    FileEdit,
 } from "lucide-react";
 
 export default async function AdminDashboard() {
@@ -22,12 +23,12 @@ export default async function AdminDashboard() {
 
     const baseWhere = userRole === "REPORTER" ? { authorId: userId } : {};
 
-    const [totalArticles, publishedArticles, pendingArticles, totalComments] =
+    const [totalArticles, publishedArticles, pendingArticles, draftArticles] =
         await Promise.all([
             prisma.article.count({ where: baseWhere }),
             prisma.article.count({ where: { ...baseWhere, status: "PUBLISHED" } }),
             prisma.article.count({ where: { ...baseWhere, status: "PENDING_REVIEW" } }),
-            prisma.comment.count({ where: { approved: false } }),
+            prisma.article.count({ where: { ...baseWhere, status: "DRAFT" } }),
         ]);
 
     const recentArticles = await prisma.article.findMany({
@@ -44,7 +45,7 @@ export default async function AdminDashboard() {
         { label: "Total Articles", value: totalArticles, icon: FileText, color: "blue" },
         { label: "Published", value: publishedArticles, icon: Eye, color: "green" },
         { label: "Pending Review", value: pendingArticles, icon: Clock, color: "yellow" },
-        { label: "Pending Comments", value: totalComments, icon: MessageSquare, color: "red" },
+        { label: "Drafts", value: draftArticles, icon: FileEdit, color: "gray" },
     ];
 
     return (
