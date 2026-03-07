@@ -4,6 +4,7 @@ import { useEditor, EditorContent } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import Link from "@tiptap/extension-link";
 import Image from "@tiptap/extension-image";
+import Placeholder from "@tiptap/extension-placeholder";
 import {
     Bold, Italic, Strikethrough, Code, Heading1, Heading2, Heading3,
     List, ListOrdered, Quote, Minus, Link as LinkIcon, Image as ImageIcon,
@@ -45,6 +46,9 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
                 inline: false,
                 allowBase64: false,
                 HTMLAttributes: { class: "editor-image" },
+            }),
+            Placeholder.configure({
+                placeholder: placeholder || "Start typing...",
             }),
         ],
         content: value,
@@ -217,10 +221,6 @@ export function RichTextEditor({ value, onChange, placeholder, dir = "ltr" }: Ri
 
             {/* ── Editor Body ── */}
             <EditorContent editor={editor} />
-
-            {!editor.getText() && placeholder && (
-                <div className="tiptap-placeholder">{placeholder}</div>
-            )}
         </div>
     );
 }
