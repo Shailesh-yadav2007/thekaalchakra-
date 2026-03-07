@@ -3,6 +3,8 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/lib/auth";
+
 export async function createENewspaper(data: {
     titleEn: string;
     titleHi: string;
@@ -10,6 +12,13 @@ export async function createENewspaper(data: {
     publishDate: Date;
     pdfUrl: string;
 }) {
+    const session = await auth();
+    const role = (session?.user as any)?.role;
+
+    if (role !== "ADMIN" && role !== "OWNER") {
+        return { success: false, error: "Unauthorized to create e-newspaper" };
+    }
+
     // Validate inputs
     if (!data.titleEn || !data.titleHi || !data.pdfUrl || !data.publishDate) {
         throw new Error("Missing required fields");

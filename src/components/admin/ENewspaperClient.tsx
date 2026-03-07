@@ -50,10 +50,12 @@ export function ENewspaperClient({ initialNewspapers, userRole }: ENewspaperClie
         <div>
             <div className="admin-page-header">
                 <h1 className="admin-page-title">E-Newspaper Management</h1>
-                <Link href="/admin/e-newspaper/create" className="btn btn-primary">
-                    <Plus size={18} />
-                    Upload New
-                </Link>
+                {canDelete && (
+                    <Link href="/admin/e-newspaper/create" className="btn btn-primary">
+                        <Plus size={18} />
+                        Upload New
+                    </Link>
+                )}
             </div>
 
             {error && (

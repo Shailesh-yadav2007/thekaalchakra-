@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { Edit, Trash2 } from "lucide-react";
 
@@ -26,6 +26,10 @@ export function ArticlesClient({ initialArticles, userRole }: Props) {
     const [articles, setArticles] = useState(initialArticles);
     const [deleting, setDeleting] = useState<string | null>(null);
     const [error, setError] = useState("");
+
+    useEffect(() => {
+        setArticles(initialArticles);
+    }, [initialArticles]);
 
     function canDelete(article: Article): boolean {
         // Only OWNER and ADMIN can delete articles

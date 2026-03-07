@@ -12,15 +12,21 @@ import {
 export default async function AdminDashboard() {
     const session = await auth();
 
+    const userRole = (session?.user as any)?.role;
+    const userId = (session?.user as any)?.id;
+
+    const baseWhere = userRole === "REPORTER" ? { authorId: userId } : {};
+
     const [totalArticles, publishedArticles, pendingArticles, totalComments] =
         await Promise.all([
-            prisma.article.count(),
-            prisma.article.count({ where: { status: "PUBLISHED" } }),
-            prisma.article.count({ where: { status: "PENDING_REVIEW" } }),
+            prisma.article.count({ where: baseWhere }),
+            prisma.article.count({ where: { ...baseWhere, status: "PUBLISHED" } }),
+            prisma.article.count({ where: { ...baseWhere, status: "PENDING_REVIEW" } }),
             prisma.comment.count({ where: { approved: false } }),
         ]);
 
     const recentArticles = await prisma.article.findMany({
+        where: baseWhere,
         include: {
             author: { select: { name: true } },
             category: true,

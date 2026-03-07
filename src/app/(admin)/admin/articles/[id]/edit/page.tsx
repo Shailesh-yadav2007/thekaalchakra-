@@ -24,6 +24,11 @@ export default async function EditArticlePage({ params }: EditArticlePageProps) 
 
     if (!article) notFound();
 
+    if (userRole === "REPORTER" && article.authorId !== (session?.user as any)?.id) {
+        // Redirect or show a 404 page
+        notFound();
+    }
+
     return (
         <div>
             <div className="admin-page-header">

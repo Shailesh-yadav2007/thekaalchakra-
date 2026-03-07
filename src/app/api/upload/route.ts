@@ -13,6 +13,11 @@ export async function POST(request: NextRequest) {
     const file = formData.get("file") as File;
     const bucket = (formData.get("bucket") as string) || "images";
 
+    const role = (session.user as any)?.role;
+    if (bucket === "e-newspapers" && role !== "ADMIN" && role !== "OWNER") {
+        return NextResponse.json({ error: "Unauthorized to upload e-newspapers" }, { status: 403 });
+    }
+
     if (!file) {
         return NextResponse.json({ error: "No file provided" }, { status: 400 });
     }
