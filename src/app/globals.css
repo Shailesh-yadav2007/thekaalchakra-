@@ -1221,7 +1221,8 @@ img {
 /* ─── Admin Layout ───────────────────────────────────────────────── */
 .admin-layout {
   display: flex;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 }
 
 .admin-main {
@@ -1247,17 +1248,6 @@ img {
   cursor: pointer;
 }
 
-/* ─── Admin Sidebar ──────────────────────────────────────────────── */
-.admin-sidebar {
-  width: 240px;
-  background: var(--color-secondary);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  position: sticky;
-  top: 0;
-  height: 100vh;
-}
 
 /* --- Admin Sidebar specific styling was migrated to Tailwind in components/admin/AdminSidebar.tsx --- */
 
