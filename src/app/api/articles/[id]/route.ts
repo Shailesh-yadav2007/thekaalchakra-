@@ -42,13 +42,19 @@ export async function PUT(
         const body = await request.json();
         const userRole = (session.user as any).role;
 
+        // Check article existence for all users
+        const existing = await prisma.article.findUnique({
+            where: { id },
+            select: { authorId: true },
+        });
+
+        if (!existing) {
+            return NextResponse.json({ error: "Not found" }, { status: 404 });
+        }
+
         // Reporters can only edit their own articles
         if (userRole === "REPORTER") {
-            const existing = await prisma.article.findUnique({
-                where: { id },
-                select: { authorId: true },
-            });
-            if (existing?.authorId !== (session.user as any).id) {
+            if (existing.authorId !== (session.user as any).id) {
                 return NextResponse.json({ error: "Forbidden" }, { status: 403 });
             }
         }
@@ -58,13 +64,32 @@ export async function PUT(
             body.status = "PENDING_REVIEW";
         }
 
-        // Set editor and publishedAt
-        const updateData: any = { ...body };
-        delete updateData.authorId; // Never allow updating the original author via PUT
+        // Prevent mass assignment vulnerability explicitly mapping allowed fields
+        const {
+            titleEn, titleHi, slugEn, slugHi, excerptEn, excerptHi,
+            bodyEn, bodyHi, featuredImage, categoryId, status,
+            isFeatured, isBreaking, metaTitleEn, metaTitleHi,
+            metaDescEn, metaDescHi
+        } = body;
 
-        // Convert empty strings to null to prevent Prisma unique constraint errors
-        if (updateData.slugEn === "") updateData.slugEn = null;
-        if (updateData.slugHi === "") updateData.slugHi = null;
+        const updateData: Record<string, any> = {};
+        if (titleEn !== undefined) updateData.titleEn = titleEn;
+        if (titleHi !== undefined) updateData.titleHi = titleHi;
+        if (slugEn !== undefined) updateData.slugEn = slugEn || null;
+        if (slugHi !== undefined) updateData.slugHi = slugHi || null;
+        if (excerptEn !== undefined) updateData.excerptEn = excerptEn;
+        if (excerptHi !== undefined) updateData.excerptHi = excerptHi;
+        if (bodyEn !== undefined) updateData.bodyEn = bodyEn;
+        if (bodyHi !== undefined) updateData.bodyHi = bodyHi;
+        if (featuredImage !== undefined) updateData.featuredImage = featuredImage;
+        if (categoryId !== undefined) updateData.categoryId = categoryId;
+        if (status !== undefined) updateData.status = status;
+        if (isFeatured !== undefined) updateData.isFeatured = isFeatured;
+        if (isBreaking !== undefined) updateData.isBreaking = isBreaking;
+        if (metaTitleEn !== undefined) updateData.metaTitleEn = metaTitleEn;
+        if (metaTitleHi !== undefined) updateData.metaTitleHi = metaTitleHi;
+        if (metaDescEn !== undefined) updateData.metaDescEn = metaDescEn;
+        if (metaDescHi !== undefined) updateData.metaDescHi = metaDescHi;
 
         // Only Admin or Owner can actually publish via the PUT logic above.
         // If the status is PUBLISHED, we record who acted as the editor (publisher) and the time
@@ -82,7 +107,7 @@ export async function PUT(
     } catch (error: any) {
         console.error("PUT /api/articles/[id] Error:", error);
         return NextResponse.json(
-            { error: error.message || "Internal server error" },
+            { error: "Internal server error" },
             { status: 500 }
         );
     }
