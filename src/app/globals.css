@@ -265,6 +265,17 @@ img {
   }
 }
 
+.navbar-top-link {
+  font-weight: 600;
+  color: white;
+  opacity: 0.9;
+  transition: opacity 0.15s;
+}
+
+.navbar-top-link:hover {
+  opacity: 1;
+}
+
 /* ─── Language Toggle ────────────────────────────────────────────── */
 .language-toggle {
   display: flex;

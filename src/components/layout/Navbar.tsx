@@ -35,6 +35,9 @@ export function Navbar({ lang }: NavbarProps) {
                         })}
                     </time>
                     <div className="navbar-top-actions">
+                        <Link href={`/${lang}/e-paper`} className="navbar-top-link">
+                            {isHindi ? "ई-अखबार" : "E-Paper"}
+                        </Link>
                         <LanguageToggle lang={lang} alternatePath={alternatePath} />
                     </div>
                 </div>
@@ -60,9 +63,7 @@ export function Navbar({ lang }: NavbarProps) {
                                 {isHindi ? item.labelHi : item.label}
                             </Link>
                         ))}
-                        <Link href={`/${lang}/e-paper`} className="navbar-link">
-                            {isHindi ? "ई-अखबार" : "E-Paper"}
-                        </Link>
+
                     </nav>
 
                     {/* Actions */}
@@ -120,13 +121,7 @@ export function Navbar({ lang }: NavbarProps) {
                                 {isHindi ? item.labelHi : item.label}
                             </Link>
                         ))}
-                        <Link
-                            href={`/${lang}/e-paper`}
-                            className="mobile-nav-link"
-                            onClick={() => setIsMenuOpen(false)}
-                        >
-                            {isHindi ? "ई-अखबार" : "E-Paper"}
-                        </Link>
+
                     </nav>
                 </div>
             )}
