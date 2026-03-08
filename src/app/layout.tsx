@@ -34,6 +34,11 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
+  icons: {
+    icon: "/kaalchakra_favicon.png",
+    shortcut: "/kaalchakra_favicon.png",
+    apple: "/kaalchakra_favicon.png",
+  },
 };
 
 export default function RootLayout({
