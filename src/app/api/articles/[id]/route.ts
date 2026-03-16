@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
+import { notifyAdminsAndOwners, notifyEditors, notifyUser } from "@/lib/notifications";
 
 // GET /api/articles/[id]
 export async function GET(
@@ -45,7 +46,7 @@ export async function PUT(
         // Check article existence for all users
         const existing = await prisma.article.findUnique({
             where: { id },
-            select: { authorId: true },
+            select: { authorId: true, publishedAt: true, status: true, titleEn: true, titleHi: true },
         });
 
         if (!existing) {
@@ -92,16 +93,47 @@ export async function PUT(
         if (metaDescHi !== undefined) updateData.metaDescHi = metaDescHi;
 
         // Only Admin or Owner can actually publish via the PUT logic above.
-        // If the status is PUBLISHED, we record who acted as the editor (publisher) and the time
+        // Record editor and set publishedAt only on first publish (never overwrite existing date)
         if (body.status === "PUBLISHED" && (userRole === "ADMIN" || userRole === "OWNER")) {
             updateData.editorId = (session.user as any).id;
-            updateData.publishedAt = new Date();
+            if (!existing.publishedAt) {
+                updateData.publishedAt = new Date();
+            }
         }
 
         const article = await prisma.article.update({
             where: { id },
             data: updateData,
         });
+
+        // Fire notifications (non-blocking)
+        const articleTitle = body.titleEn || existing.titleEn || body.titleHi || existing.titleHi || "Untitled";
+        const authorName = (session.user as any).name || "Someone";
+
+        // Article submitted for review (status changed to PENDING_REVIEW)
+        if (body.status === "PENDING_REVIEW" && existing.status !== "PENDING_REVIEW") {
+            notifyAdminsAndOwners(
+                `${authorName} submitted "${articleTitle}" for review`,
+                "REVIEW_REQUEST",
+                article.id
+            ).catch(() => {});
+
+            notifyEditors(
+                `New article "${articleTitle}" by ${authorName} needs editing`,
+                "NEW_ARTICLE",
+                article.id
+            ).catch(() => {});
+        }
+
+        // Article published — notify the author
+        if (body.status === "PUBLISHED" && existing.status !== "PUBLISHED") {
+            notifyUser(
+                existing.authorId,
+                `Your article "${articleTitle}" has been published!`,
+                "PUBLISHED",
+                article.id
+            ).catch(() => {});
+        }
 
         return NextResponse.json(article);
     } catch (error: any) {

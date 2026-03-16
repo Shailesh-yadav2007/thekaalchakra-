@@ -59,6 +59,35 @@ export function Footer({ lang }: FooterProps) {
                             </li>
                         </ul>
                     </div>
+
+                    {/* Legal */}
+                    <div className="footer-section">
+                        <h3 className="footer-heading">
+                            {isHindi ? "कानूनी" : "Legal"}
+                        </h3>
+                        <ul className="footer-links">
+                            <li>
+                                <Link href={`/${lang}/about`} className="footer-link">
+                                    {isHindi ? "हमारे बारे में" : "About Us"}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lang}/contact`} className="footer-link">
+                                    {isHindi ? "संपर्क करें" : "Contact Us"}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lang}/privacy-policy`} className="footer-link">
+                                    {isHindi ? "गोपनीयता नीति" : "Privacy Policy"}
+                                </Link>
+                            </li>
+                            <li>
+                                <Link href={`/${lang}/terms`} className="footer-link">
+                                    {isHindi ? "नियम व शर्तें" : "Terms & Conditions"}
+                                </Link>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
 
                 {/* Bottom Bar */}

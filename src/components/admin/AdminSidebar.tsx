@@ -19,6 +19,7 @@ import {
     ChevronLeft,
     ChevronRight
 } from "lucide-react";
+import { NotificationBell } from "./NotificationBell";
 
 const iconMap: Record<string, React.ElementType> = {
     LayoutDashboard,
@@ -61,7 +62,7 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                 <Link href="/admin" className="flex items-center gap-2">
                     <span className="font-serif font-bold tracking-tight text-lg">Kaalchakra</span>
                 </Link>
-                <div className="w-8"></div> {/* Spacer for center alignment */}
+                <NotificationBell />
             </div>
 
             {/* Overlay */}
@@ -135,6 +136,12 @@ export function AdminSidebar({ user }: AdminSidebarProps) {
                         );
                     })}
                 </nav>
+
+                {/* Notification Bell (desktop) */}
+                <div className={`hidden md:flex border-t border-white/10 px-3 py-2 ${isCollapsed ? 'justify-center' : 'items-center gap-2'}`}>
+                    <NotificationBell isCollapsed={isCollapsed} />
+                    {!isCollapsed && <span className="text-sm text-gray-300">Notifications</span>}
+                </div>
 
                 {/* View Site Link & User Info */}
                 <div className="border-t border-white/10 p-3 mt-auto">

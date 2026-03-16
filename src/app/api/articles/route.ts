@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { articleSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
+import { notifyAdminsAndOwners, notifyEditors } from "@/lib/notifications";
 
 // GET /api/articles - List articles
 export async function GET(request: NextRequest) {
@@ -89,6 +90,27 @@ export async function POST(request: NextRequest) {
             publishedAt: data.status === "PUBLISHED" ? new Date() : null,
         },
     });
+
+    // Fire notifications (non-blocking)
+    const articleTitle = data.titleEn || data.titleHi || "Untitled";
+    const authorName = (session.user as any).name || "A reporter";
+    const finalStatus = data.status || "DRAFT";
+
+    if (finalStatus === "PENDING_REVIEW") {
+        notifyAdminsAndOwners(
+            `${authorName} submitted "${articleTitle}" for review`,
+            "REVIEW_REQUEST",
+            article.id
+        ).catch(() => {});
+    }
+
+    if (finalStatus !== "DRAFT") {
+        notifyEditors(
+            `New article "${articleTitle}" by ${authorName}`,
+            "NEW_ARTICLE",
+            article.id
+        ).catch(() => {});
+    }
 
     return NextResponse.json(article, { status: 201 });
 }

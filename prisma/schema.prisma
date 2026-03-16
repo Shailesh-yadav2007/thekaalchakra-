@@ -42,6 +42,7 @@ model User {
 
   authoredArticles  Article[] @relation("ArticleAuthor")
   editedArticles    Article[] @relation("ArticleEditor")
+  notifications     Notification[]
 
   @@map("users")
 }
@@ -94,6 +95,7 @@ model Article {
 
   tags           ArticleTag[]
   comments       Comment[]
+  notifications  Notification[]
 
   @@index([status])
   @@index([categoryId])
@@ -150,6 +152,24 @@ model ENewspaper {
 
   @@index([publishDate])
   @@map("e_newspapers")
+}
+
+model Notification {
+  id        String   @id @default(cuid())
+  message   String
+  type      String   // REVIEW_REQUEST | NEW_ARTICLE | PUBLISHED
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  articleId String?
+  article   Article? @relation(fields: [articleId], references: [id], onDelete: Cascade)
+
+  @@index([userId, read])
+  @@index([createdAt])
+  @@map("notifications")
 }
 
 model SiteSetting {
