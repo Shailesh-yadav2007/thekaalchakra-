@@ -37,7 +37,7 @@ export default async function ContactPage({ params }: PageProps) {
                                 <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-5 bg-gray-50 dark:bg-zinc-800/50">
                                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">ईमेल</h3>
                                     <p className="text-sm">
-                                        <a href="mailto:contact@thekaalchakra.com" className="text-red-700 hover:underline">contact@thekaalchakra.com</a>
+                                        <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a>
                                     </p>
                                 </div>
                                 <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-5 bg-gray-50 dark:bg-zinc-800/50">
@@ -51,12 +51,12 @@ export default async function ContactPage({ params }: PageProps) {
 
                         <section>
                             <h2 className="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-white">समाचार टिप भेजें</h2>
-                            <p>यदि आपके पास कोई समाचार टिप या कहानी है जिसे हमें कवर करना चाहिए, तो कृपया हमें <a href="mailto:tips@thekaalchakra.com" className="text-red-700 hover:underline">tips@thekaalchakra.com</a> पर ईमेल करें।</p>
+                            <p>यदि आपके पास कोई समाचार टिप या कहानी है जिसे हमें कवर करना चाहिए, तो कृपया हमें <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a> पर ईमेल करें।</p>
                         </section>
 
                         <section>
                             <h2 className="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-white">विज्ञापन</h2>
-                            <p>विज्ञापन और व्यावसायिक पूछताछ के लिए, कृपया हमें <a href="mailto:ads@thekaalchakra.com" className="text-red-700 hover:underline">ads@thekaalchakra.com</a> पर संपर्क करें।</p>
+                            <p>विज्ञापन और व्यावसायिक पूछताछ के लिए, कृपया हमें <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a> पर संपर्क करें।</p>
                         </section>
 
                         <section>
@@ -74,7 +74,7 @@ export default async function ContactPage({ params }: PageProps) {
                                 <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-5 bg-gray-50 dark:bg-zinc-800/50">
                                     <h3 className="font-semibold text-gray-900 dark:text-white mb-1">Email</h3>
                                     <p className="text-sm">
-                                        <a href="mailto:contact@thekaalchakra.com" className="text-red-700 hover:underline">contact@thekaalchakra.com</a>
+                                        <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a>
                                     </p>
                                 </div>
                                 <div className="rounded-xl border border-gray-200 dark:border-zinc-700 p-5 bg-gray-50 dark:bg-zinc-800/50">
@@ -88,12 +88,12 @@ export default async function ContactPage({ params }: PageProps) {
 
                         <section>
                             <h2 className="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-white">Send a News Tip</h2>
-                            <p>If you have a news tip or a story we should cover, please email us at <a href="mailto:tips@thekaalchakra.com" className="text-red-700 hover:underline">tips@thekaalchakra.com</a>.</p>
+                            <p>If you have a news tip or a story we should cover, please email us at <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a>.</p>
                         </section>
 
                         <section>
                             <h2 className="text-xl font-semibold mt-8 mb-4 text-gray-900 dark:text-white">Advertising</h2>
-                            <p>For advertising and business enquiries, please contact us at <a href="mailto:ads@thekaalchakra.com" className="text-red-700 hover:underline">ads@thekaalchakra.com</a>.</p>
+                            <p>For advertising and business enquiries, please contact us at <a href="mailto:editor@thekaalchakra.com" className="text-red-700 hover:underline">editor@thekaalchakra.com</a>.</p>
                         </section>
 
                         <section>

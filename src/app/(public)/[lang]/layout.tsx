@@ -1,6 +1,7 @@
 import { Footer } from "@/components/layout/Footer";
 import { Navbar } from "@/components/layout/Navbar";
 import { AlternatePathProvider } from "@/components/layout/AlternatePathContext";
+import { PushNotificationPrompt } from "@/components/layout/PushNotificationPrompt";
 import { isValidLanguage } from "@/lib/utils";
 import { notFound } from "next/navigation";
 
@@ -22,6 +23,7 @@ export default async function LangLayout({ children, params }: LangLayoutProps) 
                 <Navbar lang={lang} />
                 <main className="flex-1">{children}</main>
                 <Footer lang={lang} />
+                <PushNotificationPrompt lang={lang} />
             </div>
         </AlternatePathProvider>
     );

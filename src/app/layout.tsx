@@ -39,6 +39,12 @@ export const metadata: Metadata = {
     shortcut: "/kaalchakra_favicon.png",
     apple: "/kaalchakra_favicon.png",
   },
+  manifest: "/manifest.json",
+  other: {
+    "mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-capable": "yes",
+    "apple-mobile-web-app-status-bar-style": "default",
+  },
 };
 
 export default function RootLayout({

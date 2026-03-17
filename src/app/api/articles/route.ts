@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { articleSchema } from "@/lib/validations";
 import { slugify } from "@/lib/utils";
 import { notifyAdminsAndOwners, notifyEditors } from "@/lib/notifications";
+import { sendPushToAll } from "@/lib/webpush";
 
 // GET /api/articles - List articles
 export async function GET(request: NextRequest) {
@@ -110,6 +111,21 @@ export async function POST(request: NextRequest) {
             "NEW_ARTICLE",
             article.id
         ).catch(() => {});
+    }
+
+    // Push notification to readers when directly published
+    if (finalStatus === "PUBLISHED") {
+        const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slugEn: true, slugHi: true } });
+        const articleSlug = article.slugEn || article.slugHi;
+        const pushLang = article.slugEn ? "english" : "hindi";
+        const categorySlug = article.slugEn ? category?.slugEn : category?.slugHi;
+        if (articleSlug && categorySlug) {
+            sendPushToAll({
+                title: articleTitle,
+                body: article.excerptEn || article.excerptHi || "New article on TheKaalchakra",
+                url: `/${pushLang}/${categorySlug}/${articleSlug}`,
+            }).catch(() => {});
+        }
     }
 
     return NextResponse.json(article, { status: 201 });

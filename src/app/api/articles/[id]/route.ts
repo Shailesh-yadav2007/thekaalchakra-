@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { notifyAdminsAndOwners, notifyEditors, notifyUser } from "@/lib/notifications";
+import { sendPushToAll } from "@/lib/webpush";
 
 // GET /api/articles/[id]
 export async function GET(
@@ -46,7 +47,7 @@ export async function PUT(
         // Check article existence for all users
         const existing = await prisma.article.findUnique({
             where: { id },
-            select: { authorId: true, publishedAt: true, status: true, titleEn: true, titleHi: true },
+            select: { authorId: true, publishedAt: true, status: true, titleEn: true, titleHi: true, category: { select: { slugEn: true, slugHi: true } } },
         });
 
         if (!existing) {
@@ -125,7 +126,7 @@ export async function PUT(
             ).catch(() => {});
         }
 
-        // Article published — notify the author
+        // Article published — notify the author + push to readers
         if (body.status === "PUBLISHED" && existing.status !== "PUBLISHED") {
             notifyUser(
                 existing.authorId,
@@ -133,6 +134,17 @@ export async function PUT(
                 "PUBLISHED",
                 article.id
             ).catch(() => {});
+
+            const articleSlug = article.slugEn || article.slugHi;
+            const pushLang = article.slugEn ? "english" : "hindi";
+            const categorySlug = article.slugEn ? existing.category?.slugEn : existing.category?.slugHi;
+            if (articleSlug && categorySlug) {
+                sendPushToAll({
+                    title: articleTitle,
+                    body: article.excerptEn || article.excerptHi || "New article on TheKaalchakra",
+                    url: `/${pushLang}/${categorySlug}/${articleSlug}`,
+                }).catch(() => {});
+            }
         }
 
         return NextResponse.json(article);
