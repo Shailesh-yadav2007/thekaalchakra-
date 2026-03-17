@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
-import Link from "next/link";
+import { CategoryForm } from "@/components/admin/CategoryForm";
 
 export default async function CategoriesPage() {
     const session = await auth();
@@ -14,8 +14,9 @@ export default async function CategoriesPage() {
 
     return (
         <div>
-            <div className="admin-page-header">
+            <div className="admin-page-header flex items-center justify-between">
                 <h1 className="admin-page-title">Categories</h1>
+                {isAdmin && <CategoryForm />}
             </div>
 
             <div className="admin-table-wrapper">
