@@ -77,7 +77,8 @@ export async function POST(request: NextRequest) {
     }
     let slugHi: string | null = null;
     if (data.titleHi) {
-        const base = body.slugHi || slugifyHindi(data.titleHi) || `hi-${Date.now()}`;
+        const rawSlugHi = typeof body.slugHi === "string" ? slugify(body.slugHi) : "";
+        const base = rawSlugHi || slugifyHindi(data.titleHi) || `hi-${Date.now()}`;
         const existing = await prisma.article.findUnique({ where: { slugHi: base }, select: { id: true } });
         slugHi = existing ? `${base}-${Date.now()}` : base;
     }
