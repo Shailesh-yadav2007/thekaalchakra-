@@ -70,8 +70,9 @@ export function CategoryForm() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Name (English)</label>
+                    <label htmlFor="cat-nameEn" className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Name (English)</label>
                     <input
+                        id="cat-nameEn"
                         type="text"
                         value={nameEn}
                         onChange={(e) => {
@@ -84,8 +85,9 @@ export function CategoryForm() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Name (Hindi)</label>
+                    <label htmlFor="cat-nameHi" className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Name (Hindi)</label>
                     <input
+                        id="cat-nameHi"
                         type="text"
                         value={nameHi}
                         onChange={(e) => setNameHi(e.target.value)}
@@ -95,8 +97,9 @@ export function CategoryForm() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Slug (English)</label>
+                    <label htmlFor="cat-slugEn" className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Slug (English)</label>
                     <input
+                        id="cat-slugEn"
                         type="text"
                         value={slugEn}
                         onChange={(e) => setSlugEn(e.target.value)}
@@ -106,8 +109,9 @@ export function CategoryForm() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Slug (Hindi)</label>
+                    <label htmlFor="cat-slugHi" className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Slug (Hindi)</label>
                     <input
+                        id="cat-slugHi"
                         type="text"
                         value={slugHi}
                         onChange={(e) => setSlugHi(e.target.value)}
@@ -117,8 +121,9 @@ export function CategoryForm() {
                     />
                 </div>
                 <div>
-                    <label className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Sort Order</label>
+                    <label htmlFor="cat-sortOrder" className="block text-xs font-medium text-gray-600 dark:text-zinc-400 mb-1">Sort Order</label>
                     <input
+                        id="cat-sortOrder"
                         type="number"
                         value={sortOrder}
                         onChange={(e) => setSortOrder(parseInt(e.target.value) || 0)}
