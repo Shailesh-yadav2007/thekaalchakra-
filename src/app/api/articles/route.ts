@@ -68,44 +68,58 @@ export async function POST(request: NextRequest) {
         data.status = "PENDING_REVIEW";
     }
 
-    // Generate slugs with uniqueness check
-    let slugEn: string | null = null;
-    if (data.titleEn) {
-        const base = slugify(data.titleEn);
-        const existing = await prisma.article.findUnique({ where: { slugEn: base }, select: { id: true } });
-        slugEn = existing ? `${base}-${Date.now()}` : base;
-    }
-    let slugHi: string | null = null;
-    if (data.titleHi) {
-        const rawSlugHi = typeof body.slugHi === "string" ? slugify(body.slugHi) : "";
-        const base = rawSlugHi || slugifyHindi(data.titleHi) || `hi-${Date.now()}`;
-        const existing = await prisma.article.findUnique({ where: { slugHi: base }, select: { id: true } });
-        slugHi = existing ? `${base}-${Date.now()}` : base;
-    }
+    // Generate slugs with uniqueness check + retry on constraint violation
+    const generateSlugs = async () => {
+        let slugEn: string | null = null;
+        if (data.titleEn) {
+            const base = slugify(data.titleEn);
+            const existing = await prisma.article.findUnique({ where: { slugEn: base }, select: { id: true } });
+            slugEn = existing ? `${base}-${Date.now()}` : base;
+        }
+        let slugHi: string | null = null;
+        if (data.titleHi) {
+            const rawSlugHi = typeof body.slugHi === "string" ? slugifyHindi(body.slugHi) : "";
+            const base = rawSlugHi || slugifyHindi(data.titleHi) || `hi-${Date.now()}`;
+            const existing = await prisma.article.findUnique({ where: { slugHi: base }, select: { id: true } });
+            slugHi = existing ? `${base}-${Date.now()}` : base;
+        }
+        return { slugEn, slugHi };
+    };
 
-    const article = await prisma.article.create({
-        data: {
-            titleEn: data.titleEn,
-            titleHi: data.titleHi,
-            slugEn,
-            slugHi,
-            excerptEn: data.excerptEn,
-            excerptHi: data.excerptHi,
-            bodyEn: data.bodyEn,
-            bodyHi: data.bodyHi,
-            featuredImage: data.featuredImage || null,
-            categoryId: data.categoryId,
-            authorId: (session.user as any).id,
-            status: data.status || "DRAFT",
-            isFeatured: data.isFeatured || false,
-            isBreaking: data.isBreaking || false,
-            metaTitleEn: data.metaTitleEn,
-            metaTitleHi: data.metaTitleHi,
-            metaDescEn: data.metaDescEn,
-            metaDescHi: data.metaDescHi,
-            publishedAt: data.status === "PUBLISHED" ? new Date() : null,
-        },
-    });
+    let article!: Awaited<ReturnType<typeof prisma.article.create>>;
+    for (let attempt = 0; attempt < 3; attempt++) {
+        const { slugEn, slugHi } = await generateSlugs();
+        try {
+            article = await prisma.article.create({
+                data: {
+                    titleEn: data.titleEn,
+                    titleHi: data.titleHi,
+                    slugEn,
+                    slugHi,
+                    excerptEn: data.excerptEn,
+                    excerptHi: data.excerptHi,
+                    bodyEn: data.bodyEn,
+                    bodyHi: data.bodyHi,
+                    featuredImage: data.featuredImage || null,
+                    categoryId: data.categoryId,
+                    authorId: (session.user as any).id,
+                    status: data.status || "DRAFT",
+                    isFeatured: data.isFeatured || false,
+                    isBreaking: data.isBreaking || false,
+                    metaTitleEn: data.metaTitleEn,
+                    metaTitleHi: data.metaTitleHi,
+                    metaDescEn: data.metaDescEn,
+                    metaDescHi: data.metaDescHi,
+                    publishedAt: data.status === "PUBLISHED" ? new Date() : null,
+                },
+            });
+            break;
+        } catch (err: unknown) {
+            const code = (err as { code?: string })?.code;
+            if (code === "P2002" && attempt < 2) continue;
+            throw err;
+        }
+    }
 
     // Fire notifications (non-blocking)
     const articleTitle = data.titleEn || data.titleHi || "Untitled";
