@@ -3,7 +3,7 @@ import type { NextRequest } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 const SUPPORTED_LANGUAGES = ["hindi", "english"];
-const DEFAULT_LANGUAGE = "english";
+const DEFAULT_LANGUAGE = "hindi";
 
 export default async function middleware(request: NextRequest) {
     const { pathname } = request.nextUrl;

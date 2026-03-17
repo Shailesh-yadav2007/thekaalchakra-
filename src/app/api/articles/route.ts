@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 import { auth } from "@/lib/auth";
 import { articleSchema } from "@/lib/validations";
-import { slugify } from "@/lib/utils";
+import { slugify, slugifyHindi } from "@/lib/utils";
 import { notifyAdminsAndOwners, notifyEditors } from "@/lib/notifications";
 import { sendPushToAll } from "@/lib/webpush";
 
@@ -68,12 +68,26 @@ export async function POST(request: NextRequest) {
         data.status = "PENDING_REVIEW";
     }
 
+    // Generate slugs with uniqueness check
+    let slugEn: string | null = null;
+    if (data.titleEn) {
+        const base = slugify(data.titleEn);
+        const existing = await prisma.article.findUnique({ where: { slugEn: base }, select: { id: true } });
+        slugEn = existing ? `${base}-${Date.now()}` : base;
+    }
+    let slugHi: string | null = null;
+    if (data.titleHi) {
+        const base = body.slugHi || slugifyHindi(data.titleHi) || `hi-${Date.now()}`;
+        const existing = await prisma.article.findUnique({ where: { slugHi: base }, select: { id: true } });
+        slugHi = existing ? `${base}-${Date.now()}` : base;
+    }
+
     const article = await prisma.article.create({
         data: {
             titleEn: data.titleEn,
             titleHi: data.titleHi,
-            slugEn: data.titleEn ? slugify(data.titleEn) : null,
-            slugHi: data.titleHi ? (body.slugHi || `hi-${Date.now()}`) : null,
+            slugEn,
+            slugHi,
             excerptEn: data.excerptEn,
             excerptHi: data.excerptHi,
             bodyEn: data.bodyEn,
