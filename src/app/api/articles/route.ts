@@ -113,19 +113,21 @@ export async function POST(request: NextRequest) {
         ).catch(() => {});
     }
 
-    // Push notification to readers when directly published
+    // Push notification to readers when directly published (fire-and-forget)
     if (finalStatus === "PUBLISHED") {
-        const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slugEn: true, slugHi: true } });
-        const articleSlug = article.slugEn || article.slugHi;
-        const pushLang = article.slugEn ? "english" : "hindi";
-        const categorySlug = article.slugEn ? category?.slugEn : category?.slugHi;
-        if (articleSlug && categorySlug) {
-            sendPushToAll({
-                title: articleTitle,
-                body: article.excerptEn || article.excerptHi || "New article on TheKaalchakra",
-                url: `/${pushLang}/${categorySlug}/${articleSlug}`,
-            }).catch(() => {});
-        }
+        (async () => {
+            const category = await prisma.category.findUnique({ where: { id: data.categoryId }, select: { slugEn: true, slugHi: true } });
+            const articleSlug = article.slugEn || article.slugHi;
+            const pushLang = article.slugEn ? "english" : "hindi";
+            const categorySlug = article.slugEn ? category?.slugEn : category?.slugHi;
+            if (articleSlug && categorySlug) {
+                await sendPushToAll({
+                    title: articleTitle,
+                    body: article.excerptEn || article.excerptHi || "New article on TheKaalchakra",
+                    url: `/${pushLang}/${categorySlug}/${articleSlug}`,
+                });
+            }
+        })().catch(() => {});
     }
 
     return NextResponse.json(article, { status: 201 });

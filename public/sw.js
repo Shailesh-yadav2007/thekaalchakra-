@@ -17,6 +17,14 @@ self.addEventListener("push", (event) => {
 
 self.addEventListener("notificationclick", (event) => {
   event.notification.close();
-  const url = event.notification.data?.url || "/english";
+  let url = event.notification.data?.url || "/english";
+  try {
+    const parsed = new URL(url, self.location.origin);
+    if (parsed.origin !== self.location.origin) {
+      url = "/english";
+    }
+  } catch {
+    url = "/english";
+  }
   event.waitUntil(clients.openWindow(url));
 });

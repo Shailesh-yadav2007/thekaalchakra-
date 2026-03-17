@@ -30,10 +30,16 @@ export function PushNotificationPrompt({ lang }: { lang: string }) {
     if (!("serviceWorker" in navigator) || !("PushManager" in window)) return;
 
     // Check if dismissed recently
-    const dismissed = localStorage.getItem(DISMISS_KEY);
-    if (dismissed) {
-      const dismissedAt = parseInt(dismissed, 10);
-      if (Date.now() - dismissedAt < DISMISS_DAYS * 24 * 60 * 60 * 1000) return;
+    try {
+      const dismissed = localStorage.getItem(DISMISS_KEY);
+      if (dismissed) {
+        const dismissedAt = parseInt(dismissed, 10);
+        if (!Number.isNaN(dismissedAt) && Date.now() - dismissedAt < DISMISS_DAYS * 24 * 60 * 60 * 1000) {
+          return;
+        }
+      }
+    } catch {
+      // localStorage unavailable, proceed to show prompt
     }
 
     let cancelled = false;
@@ -75,19 +81,24 @@ export function PushNotificationPrompt({ lang }: { lang: string }) {
 
       if (!res.ok) {
         console.error("[PushNotification] Subscribe API failed:", res.status);
+        await subscription.unsubscribe();
+        return;
       }
 
       setShow(false);
     } catch (err) {
       console.warn("[PushNotification] Subscription failed:", err);
-      setShow(false);
     } finally {
       setSubscribing(false);
     }
   };
 
   const handleDismiss = () => {
-    localStorage.setItem(DISMISS_KEY, Date.now().toString());
+    try {
+      localStorage.setItem(DISMISS_KEY, Date.now().toString());
+    } catch {
+      // Ignore if localStorage is unavailable
+    }
     setShow(false);
   };
 
@@ -129,6 +140,7 @@ export function PushNotificationPrompt({ lang }: { lang: string }) {
           </div>
           <button
             onClick={handleDismiss}
+            aria-label={isHindi ? "खारिज करें" : "Dismiss"}
             className="shrink-0 p-1 text-gray-400 hover:text-gray-600 dark:hover:text-zinc-300 transition-colors"
           >
             <X size={16} />
