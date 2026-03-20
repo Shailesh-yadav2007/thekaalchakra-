@@ -143,6 +143,7 @@ img {
   display: flex;
   align-items: center;
   margin-left: -1.50rem;
+  flex-shrink: 0;
 }
 
 .navbar-logo-text {
@@ -159,6 +160,13 @@ img {
   flex-wrap: nowrap;
   padding-left: 2rem;
   justify-content: flex-start;
+  overflow-x: auto;
+  min-width: 0;
+  scrollbar-width: none;
+}
+
+.navbar-nav::-webkit-scrollbar {
+  display: none;
 }
 
 .navbar-link {
@@ -180,6 +188,7 @@ img {
   display: flex;
   align-items: center;
   gap: 0.5rem;
+  flex-shrink: 0;
 }
 
 .navbar-icon-btn {
@@ -263,7 +272,7 @@ img {
   display: block;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .desktop-only {
     display: flex;
   }
