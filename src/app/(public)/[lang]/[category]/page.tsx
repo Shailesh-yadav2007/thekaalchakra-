@@ -15,7 +15,9 @@ export async function generateMetadata({ params }: CategoryPageProps): Promise<M
     const isHindi = lang === "hindi";
 
     const cat = await prisma.category.findFirst({
-        where: isHindi ? { slugHi: category } : { slugEn: category },
+        where: {
+            OR: [{ slugEn: category }, { slugHi: category }],
+        },
     });
 
     if (!cat) return { title: "Category Not Found" };
@@ -43,7 +45,9 @@ export default async function CategoryPage({ params, searchParams }: CategoryPag
     const pageSize = 12;
 
     const cat = await prisma.category.findFirst({
-        where: isHindi ? { slugHi: category } : { slugEn: category },
+        where: {
+            OR: [{ slugEn: category }, { slugHi: category }],
+        },
     });
 
     if (!cat) notFound();
