@@ -7,9 +7,16 @@ interface BreakingTickerProps {
 
 export async function BreakingTicker({ lang }: BreakingTickerProps) {
     const isHindi = lang === "hindi";
-
+const oneDayAgo = new Date();
+oneDayAgo.setHours(oneDayAgo.getHours() - 24);
     const breakingArticles = await prisma.article.findMany({
-        where: { isBreaking: true, status: "PUBLISHED" },
+       where: {
+  isBreaking: true,
+  status: "PUBLISHED",
+  publishedAt: {
+    gte: oneDayAgo,
+  },
+},
         select: {
             id: true,
             titleEn: true,
