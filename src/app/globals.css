@@ -2207,3 +2207,12 @@ img {
   pointer-events: none;
   height: 0;
 }
+.updated-time {
+  margin-left: 10px;
+  color: #6b7280;
+  font-size: 14px;
+}
+
+.reading-time {
+  margin-left: 10px;
+}
