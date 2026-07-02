@@ -7,7 +7,7 @@ import { ArticleContent } from "@/components/article/ArticleContent";
 import { ShareButtons } from "@/components/article/ShareButtons";
 import { RelatedStories } from "@/components/article/RelatedStories";
 import { SetAlternatePath } from "@/components/layout/SetAlternatePath";
-
+import ReadingProgress from "@/components/layout/ReadingProgress";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface ArticlePageProps {
@@ -100,7 +100,8 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
         : (article.slugHi && article.category.slugHi ? `/hindi/${article.category.slugHi}/${article.slugHi}` : (article.category.slugHi ? `/hindi/${article.category.slugHi}` : '/hindi'));
 
     return (
-        <>
+        <> 
+             <ReadingProgress />
             <SetAlternatePath path={alternatePath} />
             <script
                 type="application/ld+json"
