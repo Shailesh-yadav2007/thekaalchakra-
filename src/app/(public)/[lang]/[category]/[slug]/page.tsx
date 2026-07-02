@@ -131,7 +131,10 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
                                 <time dateTime={article.publishedAt.toISOString()}>
                                     {formatDate(article.publishedAt, lang as SupportedLanguage)}
                                </time> 
-                            )} 
+                            <span className="updated-time">
+  🔄 {isHindi ? "अपडेट:" : "Updated:"}{" "}
+  {formatDate(article.updatedAt, lang as SupportedLanguage)}
+</span>
                             <span className="reading-time">
   • 🕒 {readingTime} min read
 </span>
