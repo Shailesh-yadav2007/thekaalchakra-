@@ -73,7 +73,8 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
     const body = isHindi ? article.bodyHi : article.bodyEn;
     const categoryName = isHindi ? article.category.nameHi : article.category.nameEn;
     const categorySlug = isHindi ? article.category.slugHi : article.category.slugEn;
-
+const wordCount = (body || "").replace(/<[^>]*>/g, "").trim().split(/\s+/).length;
+const readingTime = Math.max(1, Math.ceil(wordCount / 200));
     // JSON-LD Schema markup
     const jsonLd = {
         "@context": "https://schema.org",
@@ -128,8 +129,11 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
                             {article.publishedAt && (
                                 <time dateTime={article.publishedAt.toISOString()}>
                                     {formatDate(article.publishedAt, lang as SupportedLanguage)}
-                                </time>
-                            )}
+                               </time> 
+                            )} 
+                            <span className="reading-time">
+  • 🕒 {readingTime} min read
+</span>
                         </div>
                         <ShareButtons
                             url={`${siteConfig.url}/${lang}/${categorySlug}/${slug}`}
