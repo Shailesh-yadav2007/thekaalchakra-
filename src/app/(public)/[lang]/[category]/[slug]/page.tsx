@@ -6,6 +6,7 @@ import { formatDate } from "@/lib/utils";
 import { ArticleContent } from "@/components/article/ArticleContent";
 import { ShareButtons } from "@/components/article/ShareButtons";
 import { RelatedStories } from "@/components/article/RelatedStories";
+import { CommentSection } from "@/components/article/CommentSection";
 import { SetAlternatePath } from "@/components/layout/SetAlternatePath";
 import ReadingProgress from "@/components/layout/ReadingProgress";
 import type { SupportedLanguage } from "@/lib/utils";
@@ -63,6 +64,10 @@ export default async function ArticlePage({ params }: ArticlePageProps) {
             editor: { select: { id: true, name: true } },
             category: true,
             tags: { include: { tag: true } },
+            comments: {
+                where: { approved: true },
+                orderBy: { createdAt: "desc" },
+            },
         },
     });
 
@@ -179,7 +184,12 @@ const readingTime = Math.max(1, Math.ceil(wordCount / 200));
                     lang={lang as SupportedLanguage}
                 />
 
-
+                {/* Comments Section */}
+                <CommentSection
+                    articleId={article.id}
+                    comments={article.comments}
+                    lang={lang as SupportedLanguage}
+                />
             </article>
         </>
     );

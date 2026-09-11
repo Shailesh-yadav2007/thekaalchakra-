@@ -27,18 +27,15 @@ export default async function SearchPage(
     const isHindi = lang === 'hindi';
     const searchQuery = q || '';
 
-    // Choose which fields to search based on lang
-    const searchConditions = isHindi
-        ? [
-            { titleHi: { contains: searchQuery, mode: 'insensitive' as const } },
-            { excerptHi: { contains: searchQuery, mode: 'insensitive' as const } },
-            { bodyHi: { contains: searchQuery, mode: 'insensitive' as const } },
-        ]
-        : [
-            { titleEn: { contains: searchQuery, mode: 'insensitive' as const } },
-            { excerptEn: { contains: searchQuery, mode: 'insensitive' as const } },
-            { bodyEn: { contains: searchQuery, mode: 'insensitive' as const } },
-        ];
+    // Search across both English and Hindi title, excerpt, and body fields
+    const searchConditions = [
+        { titleEn: { contains: searchQuery, mode: 'insensitive' as const } },
+        { titleHi: { contains: searchQuery, mode: 'insensitive' as const } },
+        { excerptEn: { contains: searchQuery, mode: 'insensitive' as const } },
+        { excerptHi: { contains: searchQuery, mode: 'insensitive' as const } },
+        { bodyEn: { contains: searchQuery, mode: 'insensitive' as const } },
+        { bodyHi: { contains: searchQuery, mode: 'insensitive' as const } },
+    ];
 
     // Fetch matching articles
     const articles = await prisma.article.findMany({

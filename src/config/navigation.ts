@@ -1,51 +1,19 @@
 import type { NavItem } from "@/types";
 
 export const mainNavItems: NavItem[] = [
-    {
-        label: "Politics",
-        labelHi: "राजनीति",
-        href: "/politics",
-    },
-    {
-        label: "India",
-        labelHi: "भारत",
-        href: "/india",
-    },
-    {
-        label: "World",
-        labelHi: "विश्व",
-        href: "/world",
-    },
-    {
-        label: "Business",
-        labelHi: "व्यापार",
-        href: "/business",
-    },
-    {
-        label: "Technology",
-        labelHi: "तकनीक",
-        href: "/technology",
-    },
-    {
-        label: "Sports",
-        labelHi: "खेल",
-        href: "/sports",
-    },
-    {
-        label: "Entertainment",
-        labelHi: "मनोरंजन",
-        href: "/entertainment",
-    },
-    {
-        label: "Lifestyle",
-        labelHi: "जीवनशैली",
-        href: "/lifestyle",
-    },
-    {
-        label: "Editorial",
-        labelHi: "सम्पादकीय",
-        href: "/editorial",
-    },
+    { label: "India", labelHi: "देश", href: "/india" },
+    { label: "State", labelHi: "राज्य", href: "/state" },
+    { label: "Politics", labelHi: "राजनीति", href: "/politics" },
+    { label: "World", labelHi: "दुनिया", href: "/world" },
+    { label: "Business", labelHi: "बिज़नेस", href: "/business" },
+    { label: "Sports", labelHi: "खेल", href: "/sports" },
+    { label: "Entertainment", labelHi: "मनोरंजन", href: "/entertainment" },
+    { label: "Technology", labelHi: "टेक्नोलॉजी", href: "/technology" },
+    { label: "Education", labelHi: "शिक्षा", href: "/education" },
+    { label: "Health", labelHi: "स्वास्थ्य", href: "/health" },
+    { label: "Opinion", labelHi: "विचार", href: "/opinion" },
+    { label: "Videos", labelHi: "वीडियो", href: "/videos" },
+    { label: "Special", labelHi: "विशेष", href: "/special" },
 ];
 
 export const adminNavItems = [
