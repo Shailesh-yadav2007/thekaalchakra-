@@ -1,4 +1,4 @@
-import { formatDate } from "@/lib/utils";
+import { formatDate, formatRelativeTime } from "@/lib/utils";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface ArticleCardProps {
@@ -50,7 +50,9 @@ export function ArticleCard({ article, lang }: ArticleCardProps) {
                 <div className="article-card-meta">
                     <span>{article.author.name}</span>
                     {article.publishedAt && (
-                        <time>{formatDate(article.publishedAt, lang)}</time>
+                        <time dateTime={new Date(article.publishedAt).toISOString()}>
+                            {formatRelativeTime(article.publishedAt, lang)}
+                        </time>
                     )}
                 </div>
             </div>

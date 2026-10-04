@@ -60,8 +60,19 @@ export default async function AboutPage({ params }: PageProps) {
                         </section>
 
                         <section>
-                            <h2 className="text-xl font-semibold mt-8 mb-3 text-gray-900 dark:text-white">संपर्क करें</h2>
-                            <p>हमसे जुड़ने या किसी भी सुझाव के लिए, कृपया हमारे <a href={`/${lang}/contact`} className="text-red-700 hover:underline">संपर्क पृष्ठ</a> पर जाएं।</p>
+                            <h2 className="text-xl font-semibold mt-8 mb-3 text-gray-900 dark:text-white">संपर्क एवं सोशल मीडिया</h2>
+                            <p className="mb-4">हमसे जुड़ने या किसी भी सुझाव के लिए, कृपया हमारे <a href={`/${lang}/contact`} className="text-red-700 hover:underline">संपर्क पृष्ठ</a> पर जाएं या हमारे आधिकारिक सोशल मीडिया चैनलों पर हमें फ़ॉलो करें:</p>
+                            <div className="flex items-center gap-4 pt-2">
+                                <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium text-sm hover:bg-red-700 transition-colors">
+                                    YouTube Channel
+                                </a>
+                                <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-pink-600 text-white rounded-lg font-medium text-sm hover:bg-pink-700 transition-colors">
+                                    Instagram
+                                </a>
+                                <a href={siteConfig.social.facebook} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors">
+                                    Facebook
+                                </a>
+                            </div>
                         </section>
                     </>
                 ) : (
@@ -98,7 +109,18 @@ export default async function AboutPage({ params }: PageProps) {
 
                         <section>
                             <h2 className="text-xl font-semibold mt-8 mb-3 text-gray-900 dark:text-white">Get in Touch</h2>
-                            <p>To connect with us or share any suggestions, please visit our <a href={`/${lang}/contact`} className="text-red-700 hover:underline">Contact page</a>.</p>
+                            <p className="mb-4">To connect with us or share any suggestions, please visit our <a href={`/${lang}/contact`} className="text-red-700 hover:underline">Contact page</a> or follow our official social channels:</p>
+                            <div className="flex items-center gap-4 pt-2">
+                                <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-red-600 text-white rounded-lg font-medium text-sm hover:bg-red-700 transition-colors">
+                                    YouTube Channel
+                                </a>
+                                <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-pink-600 text-white rounded-lg font-medium text-sm hover:bg-pink-700 transition-colors">
+                                    Instagram
+                                </a>
+                                <a href={siteConfig.social.facebook} target="_blank" rel="noopener noreferrer" className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium text-sm hover:bg-blue-700 transition-colors">
+                                    Facebook
+                                </a>
+                            </div>
                         </section>
                     </>
                 )}

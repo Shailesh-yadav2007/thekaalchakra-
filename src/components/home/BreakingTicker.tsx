@@ -9,12 +9,16 @@ interface BreakingTickerProps {
 
 export async function BreakingTicker({ lang }: BreakingTickerProps) {
     const isHindi = lang === "hindi";
+    const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
 
-    // Live data query: Fetch articles flagged as isBreaking and status PUBLISHED from Prisma DB
+    // Live data query: Fetch articles flagged as isBreaking, PUBLISHED, and within the last 24 hours
     const breakingArticles = await prisma.article.findMany({
         where: {
             isBreaking: true,
             status: "PUBLISHED",
+            publishedAt: {
+                gte: twentyFourHoursAgo,
+            },
         },
         select: {
             id: true,

@@ -2,9 +2,9 @@
 
 import { useState, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { slugify, slugifyHindi } from "@/lib/utils";
+import { slugify, slugifyHindi, extractYouTubeId } from "@/lib/utils";
 import { RichTextEditor } from "@/components/admin/RichTextEditor";
-import { Upload, X, ImageIcon, Loader2 } from "lucide-react";
+import { Upload, X, ImageIcon, Loader2, Youtube } from "lucide-react";
 
 interface Category {
     id: string;
@@ -34,7 +34,26 @@ export function ArticleForm({ article, categories, tags, userRole }: ArticleForm
     const [saving, setSaving] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [dragOver, setDragOver] = useState(false);
+    const [youtubeUrl, setYoutubeUrl] = useState("");
+    const [youtubeId, setYoutubeId] = useState<string | null>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleYoutubeUrlChange = (url: string) => {
+        setYoutubeUrl(url);
+        const id = extractYouTubeId(url);
+        setYoutubeId(id);
+    };
+
+    const insertYoutubeEmbedToBody = () => {
+        if (!youtubeId) return;
+        const iframeHtml = `<div className="youtube-embed-wrapper my-6 aspect-video relative rounded-xl overflow-hidden shadow-md"><iframe src="https://www.youtube-nocookie.com/embed/${youtubeId}" title="YouTube Video Player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen className="w-full h-full"></iframe></div>`;
+        if (activeTab === "english") {
+            handleChange("bodyEn", (formData.bodyEn || "") + iframeHtml);
+        } else {
+            handleChange("bodyHi", (formData.bodyHi || "") + iframeHtml);
+        }
+        alert("YouTube video embedded into article content!");
+    };
 
     const [formData, setFormData] = useState({
         titleEn: article?.titleEn || "",
@@ -353,17 +372,47 @@ export function ArticleForm({ article, categories, tags, userRole }: ArticleForm
                                 )}
                             </div>
                         )}
+                    </div>
 
-                        <div className="form-group" style={{ marginTop: "0.5rem" }}>
-                            <label>Or paste image URL</label>
+                    {/* YouTube Video Embed Option */}
+                    <div className="form-card">
+                        <h3 className="form-card-title flex items-center gap-2">
+                            <Youtube size={18} className="text-red-600" />
+                            <span>YouTube Video (Optional)</span>
+                        </h3>
+                        <div className="form-group">
+                            <label>Paste YouTube Video URL</label>
                             <input
                                 type="url"
-                                value={formData.featuredImage}
-                                onChange={(e) => handleChange("featuredImage", e.target.value)}
+                                value={youtubeUrl}
+                                onChange={(e) => handleYoutubeUrlChange(e.target.value)}
                                 className="form-input"
-                                placeholder="https://..."
+                                placeholder="https://www.youtube.com/watch?v=..."
                             />
                         </div>
+                        {youtubeId && (
+                            <div className="youtube-preview mt-3 rounded-lg overflow-hidden border border-gray-200 dark:border-zinc-700">
+                                <div className="aspect-video relative bg-black">
+                                    <iframe
+                                        src={`https://www.youtube-nocookie.com/embed/${youtubeId}`}
+                                        title="YouTube Preview"
+                                        className="w-full h-full border-0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                    />
+                                </div>
+                                <div className="p-2 text-xs bg-gray-50 dark:bg-zinc-800 flex items-center justify-between text-gray-600 dark:text-gray-300">
+                                    <span>Video ID: {youtubeId}</span>
+                                    <button
+                                        type="button"
+                                        onClick={insertYoutubeEmbedToBody}
+                                        className="text-red-600 font-semibold hover:underline"
+                                    >
+                                        Insert Into Body
+                                    </button>
+                                </div>
+                            </div>
+                        )}
                     </div>
 
                     {/* Options */}

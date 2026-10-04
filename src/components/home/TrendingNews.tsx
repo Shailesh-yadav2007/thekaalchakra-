@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import { formatRelativeTime } from "@/lib/utils";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface TrendingNewsProps {
@@ -46,7 +47,7 @@ export async function TrendingNews({ lang }: TrendingNewsProps) {
                     const title = (isHindi ? article.titleHi : article.titleEn) || "";
                     const slug = (isHindi ? article.slugHi : article.slugEn) || "";
                     const catSlug = (isHindi ? article.category.slugHi : article.category.slugEn) || "news";
-                    const relTimes = ["20m ago", "35m ago", "1h ago", "2h ago", "3h ago"];
+                    const formattedTime = formatRelativeTime(article.publishedAt, lang);
 
                     return (
                         <div key={article.id} className="trending-item">
@@ -56,7 +57,7 @@ export async function TrendingNews({ lang }: TrendingNewsProps) {
                                     <h3 className="trending-headline">
                                         <Link href={`/${lang}/${catSlug}/${slug}`}>{title}</Link>
                                     </h3>
-                                    <span className="trending-timestamp">{relTimes[idx % relTimes.length]}</span>
+                                    {formattedTime && <span className="trending-timestamp">{formattedTime}</span>}
                                 </div>
                             </div>
 

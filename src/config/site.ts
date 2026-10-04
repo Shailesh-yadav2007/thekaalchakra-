@@ -7,9 +7,10 @@ export const siteConfig = {
     defaultLanguage: "english" as const,
     languages: ["hindi", "english"] as const,
     social: {
-        twitter: "",
-        facebook: "",
-        instagram: "",
+        youtube: "https://youtube.com/@the_kaalchakranews?si=7vEbkY5upnSKewvi",
+        instagram: "https://www.instagram.com/the_kaalchakra?stkn=MWxsaXVmMGtqNmtueg==",
+        facebook: "https://www.facebook.com/share/1K1fsJBKLH/",
+        twitter: "https://x.com",
         whatsapp: "",
     },
     seo: {

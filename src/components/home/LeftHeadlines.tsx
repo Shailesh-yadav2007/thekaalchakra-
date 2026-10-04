@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { Clock, ChevronRight } from "lucide-react";
+import { formatRelativeTime } from "@/lib/utils";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface LeftHeadlinesProps {
@@ -42,6 +43,7 @@ export async function LeftHeadlines({ lang }: LeftHeadlinesProps) {
                     const slug = (isHindi ? article.slugHi : article.slugEn) || "";
                     const catSlug = (isHindi ? article.category.slugHi : article.category.slugEn) || "news";
                     const isLive = article.isBreaking || idx === 0;
+                    const formattedTime = formatRelativeTime(article.publishedAt, lang);
 
                     return (
                         <div key={article.id} className="headline-card">
@@ -51,7 +53,7 @@ export async function LeftHeadlines({ lang }: LeftHeadlinesProps) {
                                 ) : (
                                     <span className="badge-cat-sm">{isHindi ? "विश्लेषण" : "Analysis"}</span>
                                 )}
-                                <span className="card-rel-time">10m ago</span>
+                                {formattedTime && <span className="card-rel-time">{formattedTime}</span>}
                             </div>
 
                             <h3 className="card-headline">
@@ -65,10 +67,12 @@ export async function LeftHeadlines({ lang }: LeftHeadlinesProps) {
                                     <span>{isHindi ? "और पढ़ें" : "Read More"}</span>
                                     <ChevronRight size={14} />
                                 </Link>
-                                <div className="card-time-tag">
-                                    <Clock size={12} />
-                                    <span>5 मिनट पहले</span>
-                                </div>
+                                {formattedTime && (
+                                    <div className="card-time-tag">
+                                        <Clock size={12} />
+                                        <span>{formattedTime}</span>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     );

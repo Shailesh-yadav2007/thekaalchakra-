@@ -122,3 +122,53 @@ export type SupportedLanguage = (typeof SUPPORTED_LANGUAGES)[number];
 export function isValidLanguage(lang: string): lang is SupportedLanguage {
     return SUPPORTED_LANGUAGES.includes(lang as SupportedLanguage);
 }
+
+/**
+ * Format a relative time string (e.g., "5 मिनट पहले" / "5 minutes ago").
+ */
+export function formatRelativeTime(date: Date | string | null | undefined, lang: "hindi" | "english" = "english"): string {
+    if (!date) return "";
+    const d = new Date(date);
+    if (isNaN(d.getTime())) return "";
+
+    const now = new Date();
+    const diffInSeconds = Math.floor((now.getTime() - d.getTime()) / 1000);
+
+    if (diffInSeconds < 60) {
+        return lang === "hindi" ? "अभी" : "Just now";
+    }
+
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) {
+        return lang === "hindi"
+            ? `${diffInMinutes} मिनट पहले`
+            : `${diffInMinutes} minute${diffInMinutes > 1 ? "s" : ""} ago`;
+    }
+
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) {
+        return lang === "hindi"
+            ? `${diffInHours} घंटे पहले`
+            : `${diffInHours} hour${diffInHours > 1 ? "s" : ""} ago`;
+    }
+
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) {
+        return lang === "hindi"
+            ? `${diffInDays} दिन पहले`
+            : `${diffInDays} day${diffInDays > 1 ? "s" : ""} ago`;
+    }
+
+    return formatDate(d, lang);
+}
+
+/**
+ * Extract YouTube Video ID from any standard YouTube URL format.
+ */
+export function extractYouTubeId(url: string): string | null {
+    if (!url) return null;
+    const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|shorts\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+    const match = url.match(regExp);
+    return (match && match[2].length === 11) ? match[2] : null;
+}
+

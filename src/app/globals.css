@@ -132,6 +132,27 @@ img {
   box-shadow: var(--shadow-sm);
 }
 
+/* ─── Kaalchakra Logo Gear Animation ───────────────────────────── */
+.kaalchakra-gear-ring {
+  transform-origin: center center;
+  animation: spin-gear 20s linear infinite;
+}
+
+@keyframes spin-gear {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .kaalchakra-gear-ring {
+    animation: none !important;
+  }
+}
+
 /* 1. Top Utility Bar */
 .utility-bar {
   background: var(--color-utility-bg);
@@ -1680,6 +1701,33 @@ img {
   .article-grid {
     grid-template-columns: repeat(4, 1fr);
   }
+}
+
+/* ─── Responsive YouTube Article Embed ──────────────────────────── */
+.article-body iframe {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: var(--radius-md);
+  margin: 1.5rem 0;
+  border: 0;
+}
+
+.youtube-embed-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  margin: 1.5rem 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+
+.youtube-embed-wrapper iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
 }
 
 /* ─── Article Card ───────────────────────────────────────────────── */

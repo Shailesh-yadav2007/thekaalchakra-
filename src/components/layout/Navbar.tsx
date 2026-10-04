@@ -1,12 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import Image from "next/image";
 import { useState } from "react";
 import { mainNavItems } from "@/config/navigation";
+import { siteConfig } from "@/config/site";
 import { LanguageToggle } from "@/components/layout/LanguageToggle";
+import { KaalchakraLogo } from "@/components/layout/KaalchakraLogo";
+import { ThemeToggle } from "@/components/layout/ThemeToggle";
 import { useAlternatePath } from "@/components/layout/AlternatePathContext";
-import { Search, Home, Menu, X, FileText, User, Facebook, Instagram, Youtube } from "lucide-react";
+import {
+    Search, Home, Menu, X, FileText, User, Facebook, Instagram, Youtube,
+    Info, Phone, Shield, FileCheck, Moon
+} from "lucide-react";
 import type { SupportedLanguage } from "@/lib/utils";
 
 interface NavbarProps {
@@ -32,7 +37,7 @@ export function Navbar({ lang }: NavbarProps) {
     const { alternatePath } = useAlternatePath();
     const isHindi = lang === "hindi";
 
-    // Stock ticker data source (dynamic state)
+    // Stock ticker data source
     const stock: StockData = {
         name: "NIFTY",
         value: "24,323.50",
@@ -82,17 +87,17 @@ export function Navbar({ lang }: NavbarProps) {
                     <div className="utility-right">
                         <LanguageToggle lang={lang} alternatePath={alternatePath} />
                         <div className="social-icons-row hidden sm:flex">
-                            <a href="https://facebook.com" target="_blank" rel="noreferrer" className="social-icon-link" aria-label="Facebook">
-                                <Facebook size={14} />
+                            <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="YouTube">
+                                <Youtube size={14} />
                             </a>
-                            <a href="https://x.com" target="_blank" rel="noreferrer" className="social-icon-link" aria-label="X">
-                                <XIcon size={14} />
-                            </a>
-                            <a href="https://instagram.com" target="_blank" rel="noreferrer" className="social-icon-link" aria-label="Instagram">
+                            <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="Instagram">
                                 <Instagram size={14} />
                             </a>
-                            <a href="https://youtube.com" target="_blank" rel="noreferrer" className="social-icon-link" aria-label="YouTube">
-                                <Youtube size={14} />
+                            <a href={siteConfig.social.facebook} target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="Facebook">
+                                <Facebook size={14} />
+                            </a>
+                            <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" className="social-icon-link" aria-label="X">
+                                <XIcon size={14} />
                             </a>
                         </div>
                     </div>
@@ -102,46 +107,34 @@ export function Navbar({ lang }: NavbarProps) {
             {/* 2. Middle Header / Masthead Area */}
             <div className="header-main">
                 <div className="header-main-inner">
-                    {/* Left Block: Search + Dates */}
+                    {/* Left Block: Mobile Drawer Trigger + Search + Dates */}
                     <div className="header-left-block">
+                        <button
+                            onClick={() => setIsMenuOpen(!isMenuOpen)}
+                            className="p-1.5 text-[var(--color-text)] hover:text-[var(--color-primary)] transition-colors md:hidden"
+                            aria-label="Toggle Menu"
+                        >
+                            {isMenuOpen ? <X size={22} /> : <Menu size={22} />}
+                        </button>
+
                         <button
                             onClick={() => setIsSearchOpen(!isSearchOpen)}
                             className="search-trigger-btn"
                             aria-label="Search"
                         >
                             <Search size={18} />
-                            <span>{isHindi ? "खोजें" : "Search"}</span>
+                            <span className="hidden sm:inline">{isHindi ? "खोजें" : "Search"}</span>
                         </button>
 
-                        <div className="header-date-block">
+                        <div className="header-date-block hidden md:flex">
                             <span className="gregorian-date">{gregorianEnglish}</span>
                             <span className="panchang-date">{panchangDate}</span>
                         </div>
                     </div>
 
-                    {/* Center Block: Masthead Brand */}
+                    {/* Center Block: Animated Kaalchakra Logo */}
                     <div className="header-center-block">
-                        <Link href={`/${lang}`} className="masthead-brand">
-                            <Image
-                                src="/logo.png"
-                                alt="TheKaalchakra Emblem"
-                                width={54}
-                                height={54}
-                                className="masthead-emblem"
-                                priority
-                            />
-                            <h1 className="masthead-wordmark">
-                                {isHindi ? "द कालचक्र" : "The Kaalchakra"}
-                            </h1>
-                        </Link>
-
-                        <div className="masthead-tagline-container">
-                            <div className="tagline-line" />
-                            <span className="masthead-tagline-text">
-                                {isHindi ? "खबर नहीं, हकीकत" : "Not Just News, The Truth"}
-                            </span>
-                            <div className="tagline-line" />
-                        </div>
+                        <KaalchakraLogo lang={lang} size="md" showTagline={true} />
                     </div>
 
                     {/* Right Block: Buttons & Stock Ticker */}
@@ -152,13 +145,13 @@ export function Navbar({ lang }: NavbarProps) {
                                 <span>{isHindi ? "ई-अखबार" : "E-Paper"}</span>
                             </Link>
 
-                            <Link href="/admin/login" className="btn-login-outline">
+                            <Link href="/admin/login" className="btn-login-outline hidden sm:flex">
                                 <User size={16} />
                                 <span>{isHindi ? "लॉग इन" : "Log In"}</span>
                             </Link>
                         </div>
 
-                        <div className="stock-ticker-row">
+                        <div className="stock-ticker-row hidden lg:flex">
                             <span className="stock-name">{stock.name}</span>
                             <span className="stock-value">{stock.value}</span>
                             <span className={`stock-change ${stock.isPositive ? "positive" : "negative"}`}>
@@ -189,7 +182,7 @@ export function Navbar({ lang }: NavbarProps) {
                 </div>
             )}
 
-            {/* 3. Primary Navigation Bar */}
+            {/* 3. Primary Category Navigation Bar */}
             <nav className="primary-nav-bar">
                 <div className="primary-nav-inner">
                     {/* Active Home Icon */}
@@ -197,7 +190,7 @@ export function Navbar({ lang }: NavbarProps) {
                         <Home size={18} />
                     </Link>
 
-                    {/* Horizontal 13 Categories */}
+                    {/* Horizontal Categories Scroll */}
                     <div className="primary-nav-list">
                         {mainNavItems.map((item) => (
                             <Link
@@ -210,7 +203,7 @@ export function Navbar({ lang }: NavbarProps) {
                         ))}
                     </div>
 
-                    {/* All Categories / Menu Icon */}
+                    {/* All Categories Drawer Trigger */}
                     <button
                         onClick={() => setIsMenuOpen(!isMenuOpen)}
                         className="nav-menu-btn"
@@ -221,24 +214,113 @@ export function Navbar({ lang }: NavbarProps) {
                 </div>
             </nav>
 
-            {/* Mobile Menu Drawer */}
+            {/* Mobile / Full Menu Slide Drawer (Matching Design Mockup) */}
             {isMenuOpen && (
-                <div className="mobile-menu">
-                    <nav className="mobile-nav">
-                        {mainNavItems.map((item) => (
-                            <Link
-                                key={item.href}
-                                href={`/${lang}${item.href}`}
-                                className="mobile-nav-link"
+                <div className="fixed inset-0 z-50 flex bg-black/60 backdrop-blur-xs transition-opacity" onClick={() => setIsMenuOpen(false)}>
+                    <div
+                        className="relative w-4/5 max-w-sm bg-[var(--color-bg)] h-full shadow-2xl flex flex-col overflow-y-auto"
+                        onClick={(e) => e.stopPropagation()}
+                    >
+                        {/* Drawer Header */}
+                        <div className="p-4 border-b border-[var(--color-border)] flex items-center justify-between">
+                            <KaalchakraLogo lang={lang} size="sm" showTagline={false} />
+                            <button
                                 onClick={() => setIsMenuOpen(false)}
+                                className="p-2 text-[var(--color-text-muted)] hover:text-[var(--color-text)] rounded-full"
                             >
-                                {isHindi ? item.labelHi : item.label}
-                            </Link>
-                        ))}
-                    </nav>
+                                <X size={20} />
+                            </button>
+                        </div>
+
+                        {/* Navigation Categories */}
+                        <div className="py-2 flex-1 divide-y divide-[var(--color-border-light)]">
+                            <div className="px-2 py-2">
+                                <Link
+                                    href={`/${lang}`}
+                                    className="flex items-center gap-3 px-4 py-2.5 rounded-lg text-red-600 bg-red-50 dark:bg-red-950/30 font-bold"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Home size={18} />
+                                    <span>{isHindi ? "होम" : "Home"}</span>
+                                </Link>
+                                {mainNavItems.map((item) => (
+                                    <Link
+                                        key={item.href}
+                                        href={`/${lang}${item.href}`}
+                                        className="flex items-center justify-between px-4 py-2.5 text-sm font-medium text-[var(--color-text)] hover:bg-[var(--color-bg-secondary)] rounded-lg transition-colors"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        <span>{isHindi ? item.labelHi : item.label}</span>
+                                    </Link>
+                                ))}
+                            </div>
+
+                            {/* Informational Section */}
+                            <div className="px-4 py-4 space-y-2 text-sm text-[var(--color-text-secondary)]">
+                                <Link
+                                    href={`/${lang}/about`}
+                                    className="flex items-center gap-3 py-1.5 hover:text-[var(--color-primary)] transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Info size={16} />
+                                    <span>{isHindi ? "हमारे बारे में" : "About Us"}</span>
+                                </Link>
+                                <Link
+                                    href={`/${lang}/contact`}
+                                    className="flex items-center gap-3 py-1.5 hover:text-[var(--color-primary)] transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Phone size={16} />
+                                    <span>{isHindi ? "संपर्क करें" : "Contact Us"}</span>
+                                </Link>
+                                <Link
+                                    href={`/${lang}/privacy-policy`}
+                                    className="flex items-center gap-3 py-1.5 hover:text-[var(--color-primary)] transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Shield size={16} />
+                                    <span>{isHindi ? "गोपनीयता नीति" : "Privacy Policy"}</span>
+                                </Link>
+                                <Link
+                                    href={`/${lang}/terms`}
+                                    className="flex items-center gap-3 py-1.5 hover:text-[var(--color-primary)] transition-colors"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <FileCheck size={16} />
+                                    <span>{isHindi ? "नियम व शर्तें" : "Terms & Conditions"}</span>
+                                </Link>
+                            </div>
+                        </div>
+
+                        {/* Drawer Footer: Socials & Dark Mode */}
+                        <div className="p-4 border-t border-[var(--color-border)] bg-[var(--color-bg-secondary)] flex items-center justify-between">
+                            <div className="flex items-center gap-3 text-[var(--color-text)]">
+                                <a href={siteConfig.social.youtube} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-red-600">
+                                    <Youtube size={18} />
+                                </a>
+                                <a href={siteConfig.social.instagram} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-pink-600">
+                                    <Instagram size={18} />
+                                </a>
+                                <a href={siteConfig.social.facebook} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-blue-600">
+                                    <Facebook size={18} />
+                                </a>
+                                <a href={siteConfig.social.twitter} target="_blank" rel="noopener noreferrer" className="p-2 hover:text-gray-900 dark:hover:text-white">
+                                    <XIcon size={16} />
+                                </a>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-xs text-[var(--color-text-muted)] font-medium">
+                                    {isHindi ? "डार्क मोड" : "Dark Mode"}
+                                </span>
+                                <ThemeToggle />
+                            </div>
+                        </div>
+                    </div>
                 </div>
             )}
         </header>
     );
 }
+
 
